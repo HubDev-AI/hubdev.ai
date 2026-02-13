@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import DraggableBox from './components/DraggableBox';
 import ProjectCard from './components/ProjectCard';
 import DocsBox from './components/DocsBox';
@@ -6,33 +7,33 @@ import DocsBox from './components/DocsBox';
 // Mock Docs Data
 const DOCS_DATA = {
   mkly: `
-    ## mkly Markup Language
-    
-    A human-readable, AI-friendly markup language that compiles to HTML.
-    
-    ### Features
-    - **Zero-Config**: Works out of the box with standard tooling.
-    - **Type-Safe**: Schema validation via Zod.
-    - **Clean Output**: Generates semantic HTML5.
-    
-    ### Quick Start
-    \`\`\`bash
-    npm install @milkly/mkly
-    \`\`\`
+## mkly Markup Language
+
+A human-readable, AI-friendly markup language that compiles to HTML.
+
+### Features
+- **Zero-Config**: Works out of the box with standard tooling.
+- **Type-Safe**: Schema validation via Zod.
+- **Clean Output**: Generates semantic HTML5.
+
+### Quick Start
+\`\`\`bash
+npm install @milkly/mkly
+\`\`\`
   `,
   untrusted: `
-    ## Untrusted<T> Language
-    
-    A backend-focused, AI-operable programming language with security-by-construction.
-    
-    ### Core Concepts
-    - **Untrusted<T>**: Tainted data wrapper that prevents accidental usage in sensitive sinks.
-    - **sec4Audit**: The official compiler and security policy enforcer.
-    - **Policy-as-Code**: Define security gates directly in your codebase.
-    
-    ### Security Levels
-    - **NORMAL**: Standard operation.
-    - **CRITICAL**: Requires explicit declassification or endorsement.
+## Untrusted<T> Language
+
+A backend-focused, AI-operable programming language with security-by-construction.
+
+### Core Concepts
+- **Untrusted<T>**: Tainted data wrapper that prevents accidental usage in sensitive sinks.
+- **sec4Audit**: The official compiler and security policy enforcer.
+- **Policy-as-Code**: Define security gates directly in your codebase.
+
+### Security Levels
+- **NORMAL**: Standard operation.
+- **CRITICAL**: Requires explicit declassification or endorsement.
   `
 };
 
@@ -207,13 +208,13 @@ function App() {
         </div>
       </DraggableBox>
 
-      {/* Interactive Docs Viewer */}
+      {/* Interactive Docs Viewer WITH MARKDOWN */}
       {activeDoc && (
         <DocsBox 
           title={activeDoc === 'mkly' ? 'MKLY_SPEC' : 'UNTRUSTED_LANG_SPEC'}
           content={
-            <div style={{ whiteSpace: 'pre-wrap' }}>
-              {DOCS_DATA[activeDoc].trim()}
+            <div className="markdown-body">
+              <ReactMarkdown>{DOCS_DATA[activeDoc]}</ReactMarkdown>
             </div>
           }
           onClose={handleCloseDocs}

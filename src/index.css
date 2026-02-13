@@ -214,6 +214,39 @@ body {
   background: var(--neon-red);
 }
 
+/* Markdown Specifics */
+.markdown-body h2, .markdown-body h3 {
+  color: #fff;
+  border-bottom: 1px solid var(--neon-red);
+  padding-bottom: 5px;
+  margin-top: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.markdown-body ul {
+  padding-left: 20px;
+}
+.markdown-body li {
+  margin-bottom: 5px;
+}
+.markdown-body code {
+  background: rgba(255, 0, 60, 0.1);
+  color: var(--neon-red);
+  padding: 2px 5px;
+  font-family: monospace;
+}
+.markdown-body pre {
+  background: #000;
+  border: 1px solid #333;
+  padding: 10px;
+  overflow-x: auto;
+}
+.markdown-body pre code {
+  color: #ddd;
+  background: transparent;
+  padding: 0;
+}
+
 /* Particle Embers */
 .particle-ash {
   position: absolute;
