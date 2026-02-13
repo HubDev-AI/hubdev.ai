@@ -482,6 +482,22 @@ body {
   filter: drop-shadow(0 0 25px rgba(255, 60, 0, 0.5)); /* Stronger Red Glow outer */
 }
 
+/* Whitish Text for Critical Box */
+.cyber-box-container.critical .markdown-body h2,
+.cyber-box-container.critical .markdown-body h3 {
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+.cyber-box-container.critical .markdown-body li::before {
+  color: #fff;
+}
+.cyber-box-container.critical .markdown-body code {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
 /* 
   TERMINAL ACCESS BUTTON STYLE 
 */

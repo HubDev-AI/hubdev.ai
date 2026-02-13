@@ -29,7 +29,7 @@ export default function DocsBox({ title, content, onClose, initialX = 100, initi
     };
   }, [isDragging, dragOffset]);
 
-  const themeColor = isCritical ? 'var(--neon-accent)' : 'var(--neon-primary)';
+  const themeColor = isCritical ? '#e0e0e0' : 'var(--neon-primary)';
 
   return (
     <div 
