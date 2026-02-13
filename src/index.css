@@ -377,3 +377,105 @@ body {
 .city-skyline, .invasion-container {
   display: none;
 }
+
+/* Docs Box Styling - Technical Readout */
+.docs-content {
+  color: #e0e0e0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  font-family: 'Share Tech Mono', monospace; 
+  background: rgba(0, 0, 0, 0.2); /* Slight depth */
+}
+
+/* Markdown Specifics - Clean & Functional */
+.markdown-body h2 {
+  font-size: 1.1rem;
+  color: var(--neon-primary); /* Theme Color */
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+  padding-bottom: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.markdown-body h3 {
+  font-size: 0.9rem;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  display: inline-block;
+  padding: 2px 8px;
+  border-left: 2px solid var(--neon-primary);
+  margin-top: 15px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.markdown-body p {
+  margin-bottom: 10px;
+  opacity: 0.9;
+}
+
+.markdown-body ul {
+  padding-left: 15px;
+  margin-bottom: 10px;
+}
+
+.markdown-body li {
+  margin-bottom: 4px;
+  list-style: none; 
+  position: relative;
+  padding-left: 10px;
+}
+
+.markdown-body li::before {
+  content: '•';
+  color: var(--neon-primary);
+  position: absolute;
+  left: -5px;
+  font-size: 1.2em;
+  line-height: 1;
+}
+
+.markdown-body strong {
+  color: #fff;
+  font-weight: normal;
+  text-shadow: 0 0 2px rgba(255,255,255,0.5);
+}
+
+.markdown-body code {
+  background: #111;
+  color: #aaddff; /* Code Blue */
+  padding: 2px 5px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+  border-radius: 2px;
+}
+
+.markdown-body pre {
+  background: #080808;
+  border-left: 3px solid #333;
+  padding: 10px;
+  overflow-x: auto;
+  margin: 10px 0;
+}
+
+.markdown-body pre code {
+  color: #ccc;
+  background: transparent;
+  padding: 0;
+  border: none;
+}
+
+/* Critical State override */
+.cyber-box-container.critical .cyber-box-frame {
+  border-color: var(--neon-accent);
+  background-image: 
+    repeating-linear-gradient(45deg, rgba(255, 60, 0, 0.05) 0px, rgba(255, 60, 0, 0.05) 2px, transparent 2px, transparent 4px),
+    linear-gradient(to bottom, #1a0a00, #000);
+}
+.cyber-box-container.critical {
+  filter: drop-shadow(0 0 20px rgba(255, 60, 0, 0.3)); 
+}

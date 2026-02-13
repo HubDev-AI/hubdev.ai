@@ -6,6 +6,36 @@ import CinematicStream from './components/CinematicStream';
 
 // --- DATA SEPARATION ---
 
+const DOCS_DATA = {
+  mkly: `## mkly Markup Language
+
+A human-readable, AI-friendly markup language that compiles to HTML.
+
+### Features
+- **Zero-Config**: Works out of the box with standard tooling.
+- **Type-Safe**: Schema validation via Zod.
+- **Clean Output**: Generates semantic HTML5.
+
+### Quick Start
+\`\`\`bash
+npm install @milkly/mkly
+\`\`\`
+`,
+  untrusted: `## Untrusted<T> Language
+
+A backend-focused, AI-operable programming language with security-by-construction.
+
+### Core Concepts
+- **Untrusted<T>**: Tainted data wrapper that prevents accidental usage in sensitive sinks.
+- **sec4Audit**: The official compiler and security policy enforcer.
+- **Policy-as-Code**: Define security gates directly in your codebase.
+
+### Security Levels
+- **NORMAL**: Standard operation.
+- **CRITICAL**: Requires explicit declassification or endorsement.
+`
+};
+
 // 1. Summary Data (For the "Dialog Box" in Overview)
 // Restored from previous user request
 const SUMMARY_DATA = {
@@ -306,7 +336,7 @@ function App() {
             {activeDocDialog && (
                 <DocsBox 
                     title={activeDocDialog === 'mkly' ? 'MKLY_SUMMARY' : 'UNTRUSTED_SUMMARY'}
-                    content={SUMMARY_DATA[activeDocDialog]}
+                    content={DOCS_DATA[activeDocDialog]}
                     onClose={handleCloseDialog}
                     initialX={window.innerWidth / 2 - 225}
                     initialY={window.innerHeight / 2 - 200}
