@@ -37,6 +37,7 @@ const DOCS_DATA = {
 };
 
 // Atmospheric Ash / Embers (Slow Vertical Drift)
+// Fitting for the "Red Tunnel"
 const Particles = () => {
     const [particles, setParticles] = useState([]);
   
@@ -52,7 +53,7 @@ const Particles = () => {
         const size = Math.random() * 3 + 'px';
         
         setParticles(prev => [...prev.slice(-50), { id, startX, startY, duration, size }]);
-      }, 300); // Gentle spawn rate
+      }, 200); 
       return () => clearInterval(interval);
     }, []);
   
@@ -87,7 +88,7 @@ function App() {
   const [activeDoc, setActiveDoc] = useState(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-  // Parallax Logic - Subtler for "Massive" feel
+  // Parallax Logic 
   useEffect(() => {
     const handleMouseMove = (e) => {
       // Normalize mouse coordinates (-1 to 1)
@@ -110,17 +111,17 @@ function App() {
 
   return (
     <div className="tron-scene">
-      {/* Parallax Container */}
+      {/* 3D Red Tunnel Grid */}
       <div 
         className="tron-grid-container"
         style={{
-          transform: `rotateX(${15 - mousePos.y * 2}deg) rotateY(${mousePos.x * 2}deg)` // Reduced movement for "heaviness"
+          transform: `rotateX(${20 - mousePos.y * 5}deg) rotateY(${mousePos.x * 5}deg)`
         }}
       >
         <div className="tron-grid tron-grid-floor" />
         <div className="tron-grid tron-grid-ceiling" />
         
-        {/* Smoldering Core */}
+        {/* Red Sun Core */}
         <div className="tron-sun" />
         
         <div className="tron-horizon-glow" />
