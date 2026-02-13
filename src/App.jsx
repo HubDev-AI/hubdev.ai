@@ -18,10 +18,16 @@ const VIEW_MODES = {
   UNTRUSTED: 'untrusted'
 };
 
-
+// Map URL path to viewMode
+function getViewModeFromPath(pathname) {
+  const path = pathname.replace(/^\//, '').toLowerCase();
+  const project = projects.find(p => p.id === path);
+  return project ? project.id : VIEW_MODES.OVERVIEW;
+}
 
 function App() {
-  const [viewMode, setViewMode] = useState(VIEW_MODES.OVERVIEW);
+  // Initialize viewMode from the current URL path
+  const [viewMode, setViewMode] = useState(() => getViewModeFromPath(window.location.pathname));
   const [activeDocDialog, setActiveDocDialog] = useState(null); // project.id
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
@@ -36,6 +42,34 @@ function App() {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
+
+  // Handle browser back/forward navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      setViewMode(getViewModeFromPath(window.location.pathname));
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Sync URL and document title when viewMode changes
+  useEffect(() => {
+    // Update URL
+    const targetPath = viewMode === VIEW_MODES.OVERVIEW ? '/' : `/${viewMode}`;
+    if (window.location.pathname !== targetPath) {
+      window.history.pushState({ viewMode }, '', targetPath);
+    }
+
+    // Update document title
+    if (viewMode === VIEW_MODES.OVERVIEW) {
+      document.title = 'HubDev AI — Next-Gen Developer Tools & Security Primitives';
+    } else {
+      const project = projects.find(p => p.id === viewMode);
+      if (project) {
+        document.title = `${project.title} — HubDev AI`;
+      }
+    }
+  }, [viewMode]);
 
   // Update Body Theme Class and Colors based on viewMode
   useEffect(() => {
@@ -70,7 +104,7 @@ function App() {
   const handleLaunchStream = (key) => {
     // 1. Close Dialog
     setActiveDocDialog(null);
-    // 2. Switch View Mode to project ID
+    // 2. Switch View Mode to project ID (URL will update via useEffect)
     setViewMode(key);
   };
 
