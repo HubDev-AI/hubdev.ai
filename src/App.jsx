@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DraggableBox from './components/DraggableBox';
 import ProjectCard from './components/ProjectCard';
 import DocsBox from './components/DocsBox';
@@ -36,6 +36,38 @@ const DOCS_DATA = {
   `
 };
 
+const Particles = () => {
+    const [particles, setParticles] = useState([]);
+  
+    useEffect(() => {
+      const interval = setInterval(() => {
+        const id = Math.random();
+        const startX = Math.random() * 100 + '%';
+        const startY = Math.random() * 100 + '%';
+        const delay = Math.random() * 2 + 's';
+        
+        setParticles(prev => [...prev.slice(-20), { id, startX, startY, delay }]);
+      }, 200);
+      return () => clearInterval(interval);
+    }, []);
+  
+    return (
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', perspective: '500px', pointerEvents: 'none' }}>
+        {particles.map(p => (
+           <div 
+             key={p.id}
+             className="particle"
+             style={{ 
+               left: p.startX, 
+               top: p.startY,
+               animationDelay: p.delay 
+             }} 
+           />
+        ))}
+      </div>
+    );
+  };
+
 function App() {
   const [activeDoc, setActiveDoc] = useState(null);
 
@@ -52,15 +84,19 @@ function App() {
       width: '100vw', 
       height: '100vh', 
       position: 'relative', 
-      background: '#050505',
+      background: '#000',
       overflow: 'hidden'
     }}>
-      {/* 3D Perspective Tron Grid */}
+      {/* 3D Immersive Tunnel */}
       <div className="tron-grid-container">
-        <div className="tron-grid" />
+        <div className="tron-grid tron-grid-floor" />
+        <div className="tron-grid tron-grid-ceiling" />
         <div className="tron-horizon-glow" />
       </div>
       
+      {/* Moving Data Particles */}
+      <Particles />
+
       {/* Texture Overlays */}
       <div className="noise-overlay" />
 
@@ -72,7 +108,7 @@ function App() {
         width: '100%',
         height: '60px',
         borderBottom: '1px solid rgba(0, 240, 255, 0.2)',
-        background: 'rgba(5, 5, 5, 0.6)',
+        background: 'rgba(5, 10, 15, 0.6)',
         backdropFilter: 'blur(5px)',
         zIndex: 100,
         display: 'flex',
