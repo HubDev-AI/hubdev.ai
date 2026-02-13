@@ -60,7 +60,7 @@ const routes = [
     path: 'untrusted',
     title: 'Untrusted<T> — HubDev AI',
     description: 'Untrusted<T> is a backend-focused security primitive enforcing security-by-construction through taint tracking, sec4Audit compiler, and policy-as-code.',
-    ogImage: 'og-untrusted.svg',
+    ogImage: 'og_untrusted_v2_1770999778032.png',
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
