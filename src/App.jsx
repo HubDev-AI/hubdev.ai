@@ -5,7 +5,9 @@ import Particles from './components/Particles';
 import DraggableBox from './components/DraggableBox';
 import ProjectCard from './components/ProjectCard';
 import DocsBox from './components/DocsBox';
+
 import CinematicStream from './components/CinematicStream';
+import Hologram from './components/Hologram';
 import projects from './data'; // Import dynamic data
 
 // View Modes
@@ -203,6 +205,9 @@ function App() {
                     isCritical={activeDialogProject.isCritical}
                 />
             )}
+            
+            {/* Animated Hologram - Overview Only */}
+            <Hologram />
           </>
         )}
 
