@@ -109,12 +109,22 @@ function App() {
     const defaultTitle = 'HubDev AI — Next-Gen Developer Tools & Security Primitives';
     const defaultDesc = "Explore HubDev AI's cutting-edge developer tools: mkly, a human-readable markup language that compiles to HTML5, and Untrusted<T>, a backend security primitive enforcing security-by-construction.";
 
-    // Build target URL — include ?loaded if this project was already loaded
-    let targetPath = viewMode === VIEW_MODES.OVERVIEW ? '/' : `/${viewMode}`;
-    if (viewMode !== VIEW_MODES.OVERVIEW && loadedStreams.has(viewMode)) {
-      const project = projects.find(p => p.id === viewMode);
-      if (project) {
-        targetPath = `/${viewMode}?loaded=${project.streamContent.length}`;
+    // Build target URL — include box positions on overview, ?loaded on streams
+    let targetPath;
+    if (viewMode === VIEW_MODES.OVERVIEW) {
+      const params = new URLSearchParams();
+      Object.entries(boxPositions).forEach(([k, v]) => {
+        params.set(k, `${v.x},${v.y}`);
+      });
+      const qs = params.toString();
+      targetPath = qs ? `/?${qs}` : '/';
+    } else {
+      targetPath = `/${viewMode}`;
+      if (loadedStreams.has(viewMode)) {
+        const project = projects.find(p => p.id === viewMode);
+        if (project) {
+          targetPath = `/${viewMode}?loaded=${project.streamContent.length}`;
+        }
       }
     }
 
