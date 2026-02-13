@@ -5,10 +5,21 @@ import { markdownComponents } from './markdownComponents';
 export default function CinematicStream({ content, onComplete, skipAnimation = false }) {
   const [displayedContent, setDisplayedContent] = useState('');
   const [isTyping, setIsTyping] = useState(true);
+  const [phase, setPhase] = useState(skipAnimation ? 'streaming' : 'revealing');
   const scrollRef = useRef(null);
   const indexRef = useRef(0);
 
+  // Lightsaber reveal phase — wait for animation to finish before streaming
   useEffect(() => {
+    if (phase !== 'revealing') return;
+    const timer = setTimeout(() => setPhase('streaming'), 900); // match CSS animation duration
+    return () => clearTimeout(timer);
+  }, [phase]);
+
+  useEffect(() => {
+    // Don't start streaming until reveal is done
+    if (phase !== 'streaming') return;
+
     // If skipping animation, show everything immediately
     if (skipAnimation) {
       setDisplayedContent(content);
@@ -47,10 +58,10 @@ export default function CinematicStream({ content, onComplete, skipAnimation = f
       cancelled = true;
       clearInterval(interval);
     };
-  }, [content, onComplete, skipAnimation]);
+  }, [content, onComplete, skipAnimation, phase]);
 
   return (
-    <div className="cinematic-stream-container">
+    <div className={`cinematic-stream-container ${phase === 'revealing' ? 'revealing' : 'revealed'}`}>
       <div className="stream-content markdown-body" ref={scrollRef}>
         <ReactMarkdown components={markdownComponents}>{displayedContent}</ReactMarkdown>
         {isTyping && <span className="stream-cursor">▋</span>}
@@ -59,10 +70,9 @@ export default function CinematicStream({ content, onComplete, skipAnimation = f
       {/* HUD Decor */}
       <div className="stream-scanline"></div>
       <div className="stream-status">
-        <span>DATA_STREAM: {isTyping ? 'RECEIVING...' : 'COMPLETE'}</span>
+        <span>DATA_STREAM: {phase === 'revealing' ? 'INITIALIZING...' : isTyping ? 'RECEIVING...' : 'COMPLETE'}</span>
         <span>PACKETS: {displayedContent.length} / {content.length}</span>
       </div>
     </div>
   );
 }
-

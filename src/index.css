@@ -191,6 +191,50 @@ body {
   pointer-events: none;
 }
 
+/* Lightsaber reveal: backdrop sweeps from bottom to top */
+.cinematic-stream-container.revealing::before {
+  animation: lightsaber-reveal 800ms ease-out forwards;
+}
+
+.cinematic-stream-container.revealing .stream-content,
+.cinematic-stream-container.revealing .stream-status {
+  opacity: 0;
+}
+
+.cinematic-stream-container.revealed .stream-content,
+.cinematic-stream-container.revealed .stream-status {
+  animation: fade-in 400ms ease forwards;
+}
+
+@keyframes lightsaber-reveal {
+  0% {
+    clip-path: inset(100% 0 0 0);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 0 40px rgba(var(--neon-primary-rgb, 255, 0, 60), 0.03),
+      0 4px 30px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.15),
+      0 0 60px rgba(var(--neon-primary-rgb, 0, 243, 255), 0.15),
+      0 -4px 20px rgba(var(--neon-primary-rgb, 0, 243, 255), 0.1),
+      0 4px 30px rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 0 40px rgba(var(--neon-primary-rgb, 255, 0, 60), 0.03),
+      0 4px 30px rgba(0, 0, 0, 0.3);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 .stream-content {
   flex: 1;
   overflow-y: auto;

@@ -1,16 +1,23 @@
 import { motion } from 'framer-motion';
 import React, { useRef } from 'react';
 
-const DraggableBox = ({ children, initialX = 0, initialY = 0, className = "", isCritical = false }) => {
+const DraggableBox = ({ children, id, initialX = 0, initialY = 0, className = "", isCritical = false, onPositionChange }) => {
   const wasDragged = useRef(false);
 
   const handleDragStart = () => {
     wasDragged.current = true;
   };
 
-  const handleDragEnd = () => {
+  const handleDragEnd = (event, info) => {
     // Keep wasDragged true briefly so the click event is suppressed
     setTimeout(() => { wasDragged.current = false; }, 0);
+
+    // Report final position back to parent
+    if (onPositionChange && id) {
+      const finalX = Math.round(initialX + info.offset.x);
+      const finalY = Math.round(initialY + info.offset.y);
+      onPositionChange(id, finalX, finalY);
+    }
   };
 
   const handleClick = (e) => {
@@ -65,4 +72,3 @@ const DraggableBox = ({ children, initialX = 0, initialY = 0, className = "", is
 };
 
 export default DraggableBox;
-

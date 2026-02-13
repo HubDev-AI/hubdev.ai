@@ -29,6 +29,41 @@ function App() {
   const [activeDocDialog, setActiveDocDialog] = useState(null); // project.id
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
+  // --- Box Position Persistence ---
+  // Parse initial box positions from URL query params (e.g. ?mkly=100,150&eco=100,600)
+  const [boxPositions, setBoxPositions] = useState(() => {
+    const defaults = {};
+    projects.forEach(p => { defaults[p.id] = { x: p.cardInitialX, y: p.cardInitialY }; });
+    defaults.eco = { x: 100, y: 600 };
+
+    const params = new URLSearchParams(window.location.search);
+    for (const [key, val] of params.entries()) {
+      if (key === 'loaded') continue; // skip stream loaded param
+      const parts = val.split(',').map(Number);
+      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+        defaults[key] = { x: parts[0], y: parts[1] };
+      }
+    }
+    return defaults;
+  });
+
+  const boxUrlUpdateTimer = useRef(null);
+  const handleBoxPositionChange = React.useCallback((id, x, y) => {
+    setBoxPositions(prev => {
+      const next = { ...prev, [id]: { x, y } };
+      // Debounced URL update
+      clearTimeout(boxUrlUpdateTimer.current);
+      boxUrlUpdateTimer.current = setTimeout(() => {
+        const params = new URLSearchParams();
+        Object.entries(next).forEach(([k, v]) => {
+          params.set(k, `${v.x},${v.y}`);
+        });
+        window.history.replaceState(null, '', `/?${params.toString()}`);
+      }, 300);
+      return next;
+    });
+  }, []);
+
   // Track which streams have completed their animation (per-project)
   const loadedStreamsRef = useRef((() => {
     const set = new Set();
@@ -282,9 +317,11 @@ function App() {
             {projects.map((project) => (
                <DraggableBox 
                  key={project.id}
-                 initialX={project.cardInitialX} 
-                 initialY={project.cardInitialY}
+                 id={project.id}
+                 initialX={boxPositions[project.id]?.x ?? project.cardInitialX} 
+                 initialY={boxPositions[project.id]?.y ?? project.cardInitialY}
                  isCritical={project.isCritical}
+                 onPositionChange={handleBoxPositionChange}
                >
                  <div onClick={() => handleOpenDialog(project.id)} style={{ cursor: 'pointer' }}>
                    <ProjectCard 
@@ -299,7 +336,12 @@ function App() {
             ))}
 
             {/* Ecosystem Data Box - STATIC (Not in JSON per request for project separation only) */}
-            <DraggableBox initialX={100} initialY={600}>
+            <DraggableBox
+              id="eco"
+              initialX={boxPositions.eco?.x ?? 100}
+              initialY={boxPositions.eco?.y ?? 600}
+              onPositionChange={handleBoxPositionChange}
+            >
                 <div style={{ color: 'var(--text-color)', fontFamily: 'var(--font-tech)' }}>
                 <h4 style={{ 
                     margin: '0 0 10px 0', 
