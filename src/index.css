@@ -1,15 +1,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
 :root {
-  /* Ares / Dillinger Grid Palette - Restored Tunnel */
+  /* Default Ares Theme (Red) */
   --bg-color: #020101; 
   --text-color: #d0d0d0;
-  --neon-red: #ff003c; 
-  --neon-orange: #ff3c00; 
-  --industrial-metal: #1a1a1a;
-  --hud-bg: rgba(20, 5, 5, 0.95); 
-  --hud-border: rgba(255, 0, 60, 0.8);
+  --neon-primary: #ff003c; /* Red Default */
+  --neon-accent: #ff3c00;  /* Orange Default */
+  --grid-speed: 3s;
   --font-tech: 'Share Tech Mono', 'Courier New', monospace;
+}
+
+/* 
+  DYNAMIC THEMES 
+*/
+body.theme-mkly {
+  --neon-primary: #00f3ff; /* Cyan */
+  --neon-accent: #0066ff;  /* Blue */
+  --grid-speed: 8s;        /* Calmer */
+}
+body.theme-untrusted {
+  --neon-primary: #ff0000; /* Deep Red */
+  --neon-accent: #ffae00;  /* Warning Orange */
+  --grid-speed: 1s;        /* Aggressive/Fast */
+  --bg-color: #1a0000;     /* Angry Background */
 }
 
 body {
@@ -21,6 +34,7 @@ body {
   overflow: hidden;
   width: 100vw;
   height: 100vh;
+  transition: background-color 0.5s ease;
 }
 
 #root {
@@ -29,9 +43,7 @@ body {
 }
 
 /* 
-  TRON: ARES RED TUNNEL
-  - Infinite 3D Scroll
-  - Deep Red Atmosphere
+  TRON: ARES RED TUNNEL (Dynamic Theme)
 */
 .tron-scene {
   position: absolute;
@@ -41,8 +53,8 @@ body {
   height: 100%;
   perspective: 800px;
   overflow: hidden;
-  /* Deep Red Radial Void */
-  background: radial-gradient(circle at 50% 50%, #1a0505 0%, #000000 90%);
+  background: radial-gradient(circle at 50% 50%, rgba(20, 0, 0, 0.5) 0%, #000000 90%);
+  transition: background 0.5s ease;
 }
 
 .tron-grid-container {
@@ -52,11 +64,10 @@ body {
   width: 200%;
   height: 200%;
   transform-style: preserve-3d; 
-  /* Parallax applied in JS */
 }
 
 /* 
-  Reflective Red Grid - Infinite Tunnel
+  Reflective Grid - Dynamic Color
 */
 .tron-grid {
   position: absolute;
@@ -64,36 +75,45 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  /* Red Lines */
   background-image: 
-    linear-gradient(rgba(255, 0, 60, 0.3) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 0, 60, 0.3) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
   background-size: 80px 80px; 
-  animation: grid-scroll 3s linear infinite; /* Smooth "Cruising" Speed */
+  /* Use Primary Color for Glow */
+  box-shadow: 0 0 120px var(--neon-primary); 
+  border-color: var(--neon-primary);
+
+  animation: grid-scroll var(--grid-speed) linear infinite;
   
-  box-shadow: 0 0 120px rgba(255, 0, 60, 0.1); 
   mask-image: linear-gradient(to bottom, transparent 5%, black 40%, black 100%);
   -webkit-mask-image: linear-gradient(to bottom, transparent 5%, black 40%, black 100%);
 }
 
+/* Override Grid Lines with Theme Color */
 .tron-grid-floor {
+  background-image: 
+    linear-gradient(var(--neon-primary) 1px, transparent 1px),
+    linear-gradient(90deg, var(--neon-primary) 1px, transparent 1px);
   transform: rotateX(80deg) translateY(0) translateZ(0);
   transform-origin: 50% 50%;
   top: 25%;
   opacity: 0.8; 
+  transition: opacity 0.5s ease;
 }
 
 .tron-grid-ceiling {
+  background-image: 
+    linear-gradient(var(--neon-primary) 1px, transparent 1px),
+    linear-gradient(90deg, var(--neon-primary) 1px, transparent 1px);
   transform: rotateX(-80deg) translateY(0) translateZ(0);
   transform-origin: 50% 50%;
   top: -25%;
   opacity: 0.3; 
-  mask-image: linear-gradient(to top, transparent 10%, black 40%, black 100%);
-  -webkit-mask-image: linear-gradient(to top, transparent 10%, black 40%, black 100%);
+  transition: opacity 0.5s ease;
 }
 
 /* 
-  The Monolith / Red Sun
+  Sun/Core - Dynamic
 */
 .tron-sun {
   position: absolute;
@@ -102,15 +122,16 @@ body {
   transform: translate(-50%, -50%);
   width: 500px; 
   height: 120px; 
-  background: radial-gradient(ellipse, rgba(255, 30, 0, 0.8) 0%, rgba(50, 0, 0, 0.5) 60%, transparent 80%);
+  background: radial-gradient(ellipse, var(--neon-primary) 0%, transparent 70%);
   z-index: 1;
   pointer-events: none;
-  filter: blur(25px);
-  animation: pulse-core 6s ease-in-out infinite alternate;
+  filter: blur(30px);
+  animation: pulse-core 4s ease-in-out infinite alternate;
+  transition: background 0.5s ease;
 }
 
 @keyframes pulse-core {
-  0% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+  0% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
   100% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.1); }
 }
 
@@ -121,10 +142,9 @@ body {
   width: 100%;
   height: 2%;
   background: white; 
-  box-shadow: 0 0 40px rgba(255, 0, 60, 0.9), 0 0 80px rgba(255, 0, 0, 0.5);
-  z-index: 1;
-  pointer-events: none;
+  box-shadow: 0 0 40px var(--neon-primary), 0 0 80px var(--neon-primary);
   opacity: 0.7; 
+  transition: box-shadow 0.5s ease;
 }
 
 @keyframes grid-scroll {
@@ -132,32 +152,157 @@ body {
   100% { background-position: 0 80px; }
 }
 
-/* Ash / Embers Overlay */
-.noise-overlay {
+/* 
+  CINEMATIC STREAM STYLES
+*/
+.cinematic-stream-container {
   position: absolute;
-  top: 0;
+  top: 100px; /* Below Header */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 1000px;
+  height: calc(100% - 200px); /* Space for Nav */
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+}
+
+.stream-content {
+  flex: 1;
+  overflow-y: auto;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: var(--neon-primary);
+  text-shadow: 0 0 5px var(--neon-primary); /* Glowing Text */
+  padding-right: 20px;
+}
+
+/* Hide Scrollbar for Cinematic Look */
+.stream-content::-webkit-scrollbar {
+  display: none;
+}
+
+/* Stream Cursor */
+.stream-cursor {
+  display: inline-block;
+  width: 10px;
+  height: 1.2rem;
+  background: var(--neon-primary);
+  animation: blink 1s step-end infinite;
+  vertical-align: middle;
+  margin-left: 5px;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Stream Extras */
+.stream-scanline {
+  position: absolute;
+  bottom: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  opacity: 0.05; 
-  pointer-events: none;
-  z-index: 4;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
+  height: 2px;
+  background: var(--neon-primary);
+  box-shadow: 0 0 10px var(--neon-primary);
+  opacity: 0.5;
+}
+.stream-status {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--neon-accent);
+  opacity: 0.7;
+}
+
+/* Markdown Overrides for Stream */
+.stream-content h2, .stream-content h3 {
+  border-bottom: 1px solid var(--neon-primary);
+  color: #fff;
+  text-shadow: 0 0 10px #fff;
+  margin-top: 40px;
+}
+.stream-content code {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 2px 6px;
+}
+.stream-content pre {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--neon-primary);
+  padding: 15px;
+  margin: 20px 0;
 }
 
 /* 
-  Physical / Industrial UI 
+  Navigation Bar (Bottom)
+*/
+.nav-bar {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--neon-primary);
+  padding: 10px 20px;
+  border-radius: 4px; /* Slight round */
+  z-index: 100;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.5s ease;
+}
+
+.nav-tab {
+  background: transparent;
+  border: none;
+  color: #666;
+  font-family: var(--font-tech);
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 5px 15px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.nav-tab:hover {
+  color: #fff;
+  text-shadow: 0 0 5px #fff;
+}
+
+.nav-tab.active {
+  color: var(--neon-primary);
+  text-shadow: 0 0 10px var(--neon-primary);
+}
+
+.nav-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--neon-primary);
+  box-shadow: 0 0 5px var(--neon-primary);
+}
+
+/* 
+  Physical / Industrial UI (Overview Mode Only)
 */
 .cyber-box-container {
   position: absolute;
   filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.8)); 
   z-index: 10;
+  transition: opacity 0.5s ease;
 }
-
 .cyber-box-frame {
   background: #0a0101; 
-  border: 1px solid var(--neon-red);
+  border: 1px solid var(--neon-primary); /* Use Theme Color */
   position: relative;
   clip-path: polygon(
     20px 0, 100% 0, 
@@ -183,81 +328,22 @@ body {
   pointer-events: none;
 }
 
-/* Critical State */
+/* Critical State override */
 .cyber-box-container.critical .cyber-box-frame {
-  border-color: var(--neon-orange);
-  background-image: 
-    repeating-linear-gradient(45deg, rgba(255, 60, 0, 0.05) 0px, rgba(255, 60, 0, 0.05) 2px, transparent 2px, transparent 4px),
-    linear-gradient(to bottom, #1a0a00, #000);
-}
-.cyber-box-container.critical {
-  filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.4)); 
-}
-
-/* Docs Box Styling */
-.docs-content {
-  color: #aaa;
-  font-size: 0.85rem;
-  line-height: 1.6;
-  max-height: 300px;
-  overflow-y: auto;
-  padding-right: 10px;
-  font-family: 'Courier New', monospace; 
-}
-.docs-content::-webkit-scrollbar {
-  width: 4px;
-}
-.docs-content::-webkit-scrollbar-track {
-  background: #000;
-}
-.docs-content::-webkit-scrollbar-thumb {
-  background: var(--neon-red);
-}
-
-/* Markdown Specifics */
-.markdown-body h2, .markdown-body h3 {
-  color: #fff;
-  border-bottom: 1px solid var(--neon-red);
-  padding-bottom: 5px;
-  margin-top: 20px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.markdown-body ul {
-  padding-left: 20px;
-}
-.markdown-body li {
-  margin-bottom: 5px;
-}
-.markdown-body code {
-  background: rgba(255, 0, 60, 0.1);
-  color: var(--neon-red);
-  padding: 2px 5px;
-  font-family: monospace;
-}
-.markdown-body pre {
-  background: #000;
-  border: 1px solid #333;
-  padding: 10px;
-  overflow-x: auto;
-}
-.markdown-body pre code {
-  color: #ddd;
-  background: transparent;
-  padding: 0;
+  border-color: var(--neon-accent);
 }
 
 /* Particle Embers */
 .particle-ash {
   position: absolute;
-  background: rgba(255, 60, 0, 0.8);
+  background: var(--neon-primary); /* Theme Color */
   width: 2px;
   height: 2px;
   border-radius: 50%;
   pointer-events: none;
   z-index: 2;
   opacity: 0;
-  box-shadow: 0 0 4px var(--neon-red);
+  box-shadow: 0 0 4px var(--neon-primary);
 }
 
 /* Glitch Utilities */
@@ -271,7 +357,7 @@ body {
   top: 0; left: 0; width: 100%; height: 100%;
 }
 .glitch-text::before {
-  left: 2px; text-shadow: -1px 0 var(--neon-red);
+  left: 2px; text-shadow: -1px 0 var(--neon-primary);
   clip: rect(24px, 550px, 90px, 0);
   animation: glitch-anim-1 0.5s infinite linear alternate-reverse; 
 }
