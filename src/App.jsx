@@ -37,13 +37,24 @@ function App() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Update Body Theme Class based on viewMode
+  // Update Body Theme Class and Colors based on viewMode
   useEffect(() => {
-    document.body.className = ''; // Reset
+    document.body.className = ''; // Reset class
+    document.documentElement.style.removeProperty('--neon-primary');
+    document.documentElement.style.removeProperty('--neon-accent');
+
     if (viewMode !== VIEW_MODES.OVERVIEW) {
       const project = projects.find(p => p.id === viewMode);
-      if (project && project.themeClass) {
-        document.body.classList.add(project.themeClass);
+      if (project) {
+        // Apply Theme Class
+        if (project.themeClass) {
+          document.body.classList.add(project.themeClass);
+        }
+        // Apply Dynamic Colors from JSON
+        if (project.themeColors) {
+            document.documentElement.style.setProperty('--neon-primary', project.themeColors.primary);
+            document.documentElement.style.setProperty('--neon-accent', project.themeColors.accent);
+        }
       }
     }
   }, [viewMode]);
@@ -109,7 +120,7 @@ function App() {
       {/* 
         Main Content Layer 
       */}
-      <div className="ui-layer">
+      <main className="ui-layer" role="main" aria-label="HubDev AI Dashboard">
         
         {/* Header - Always Visible */}
         <header style={{
@@ -207,6 +218,7 @@ function App() {
                     initialY={window.innerHeight / 2 - 200}
                     onLaunchStream={() => handleLaunchStream(activeDialogProject.id)}
                     isCritical={activeDialogProject.isCritical}
+                    boxTheme={activeDialogProject.boxTheme} // Use specific box theme
                 />
             )}
             
@@ -230,7 +242,7 @@ function App() {
            NAVIGATION BAR (Persistent)
            Allows switching between Overview and Stream(s)
         */}
-        <nav className="nav-bar">
+        <nav className="nav-bar" aria-label="Project Navigation">
             <button 
                 className={`nav-tab ${viewMode === VIEW_MODES.OVERVIEW ? 'active' : ''}`}
                 onClick={handleReturnToOverview}
@@ -249,7 +261,7 @@ function App() {
             ))}
         </nav>
 
-      </div>
+      </main>
     </div>
   );
 }

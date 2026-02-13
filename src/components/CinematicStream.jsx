@@ -5,17 +5,22 @@ export default function CinematicStream({ content, onComplete }) {
   const [displayedContent, setDisplayedContent] = useState('');
   const [isTyping, setIsTyping] = useState(true);
   const scrollRef = useRef(null);
+  const indexRef = useRef(0);
 
   useEffect(() => {
-    let index = 0;
+    // Reset on content change
+    indexRef.current = 0;
     setDisplayedContent('');
     setIsTyping(true);
+    let cancelled = false;
 
     const interval = setInterval(() => {
-      // Stream speed: 2 chars per tick for "fast but readable" data stream
-      if (index < content.length) {
-        setDisplayedContent((prev) => prev + content.charAt(index));
-        index++;
+      if (cancelled) return;
+      
+      if (indexRef.current < content.length) {
+        const charToAdd = content.charAt(indexRef.current);
+        indexRef.current++;
+        setDisplayedContent(content.substring(0, indexRef.current));
         
         // Auto-scroll to bottom while typing
         if (scrollRef.current) {
@@ -23,12 +28,17 @@ export default function CinematicStream({ content, onComplete }) {
         }
       } else {
         clearInterval(interval);
-        setIsTyping(false);
-        if (onComplete) onComplete();
+        if (!cancelled) {
+          setIsTyping(false);
+          if (onComplete) onComplete();
+        }
       }
     }, 10); // 10ms per char = high speed data
 
-    return () => clearInterval(interval);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
   }, [content, onComplete]);
 
   return (

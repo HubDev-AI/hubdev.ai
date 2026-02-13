@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 
-export default function DocsBox({ title, content, onClose, initialX = 100, initialY = 100, onLaunchStream, isCritical = false }) {
+export default function DocsBox({ title, content, onClose, initialX = 100, initialY = 100, onLaunchStream, isCritical = false, boxTheme }) {
   const [position, setPosition] = useState({ x: initialX, y: initialY });
   // ... existing state ...
   const [isDragging, setIsDragging] = useState(false);
@@ -29,7 +29,15 @@ export default function DocsBox({ title, content, onClose, initialX = 100, initi
     };
   }, [isDragging, dragOffset]);
 
-  const themeColor = isCritical ? '#e0e0e0' : 'var(--neon-primary)';
+  // Derive styles: Prefer boxTheme, then fallback to defaults
+  // Default Critical = White-ish (#e0e0e0), Default Normal = var(--neon-primary) (Red)
+  const defaultColor = isCritical ? '#e0e0e0' : 'var(--neon-primary)';
+  const borderColor = boxTheme?.borderColor || boxTheme?.color || defaultColor;
+  const textColor = boxTheme?.textColor || '#d0d0d0'; // Default text #d0d0d0
+  const primaryColor = boxTheme?.color || defaultColor;
+  
+  // Header background logic
+  const headerBg = isCritical ? 'rgba(255, 60, 0, 0.15)' : 'rgba(255, 0, 60, 0.15)'; 
 
   return (
     <div 
@@ -41,29 +49,34 @@ export default function DocsBox({ title, content, onClose, initialX = 100, initi
         zIndex: 1000 
       }}
     >
-      <div className="cyber-box-frame">
+      <div 
+        className="cyber-box-frame"
+        style={{
+            borderColor: borderColor
+        }}
+      >
         {/* Header */}
         <div 
           onMouseDown={handleMouseDown}
           style={{
             padding: '12px 20px',
-            borderBottom: `1px solid ${themeColor}`,
+            borderBottom: `1px solid ${borderColor}`,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             cursor: 'grab',
-            background: isCritical ? 'rgba(255, 60, 0, 0.15)' : 'rgba(255, 0, 60, 0.15)'
+            background: headerBg
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-             <div style={{ width: '8px', height: '8px', background: themeColor, borderRadius: '50%', boxShadow: `0 0 8px ${themeColor}` }} />
+             <div style={{ width: '8px', height: '8px', background: primaryColor, borderRadius: '50%', boxShadow: `0 0 8px ${primaryColor}` }} />
              <span style={{ fontFamily: 'var(--font-tech)', fontSize: '1rem', fontWeight: 'bold', letterSpacing: '2px', color: '#fff', textShadow: '0 0 5px rgba(255,0,0,0.5)' }}>
                {title}
              </span>
           </div>
           <button 
             onClick={onClose}
-            style={{ background: 'transparent', border: 'none', color: themeColor, cursor: 'pointer', fontSize: '1.4rem', fontWeight: 'bold', lineHeight: 1 }}
+            style={{ background: 'transparent', border: 'none', color: primaryColor, cursor: 'pointer', fontSize: '1.4rem', fontWeight: 'bold', lineHeight: 1 }}
           >
             ×
           </button>
@@ -75,7 +88,7 @@ export default function DocsBox({ title, content, onClose, initialX = 100, initi
            className="docs-content markdown-body" 
            style={{ 
              padding: '25px', 
-             color: '#d0d0d0',
+             color: textColor, 
              maxHeight: '450px',
              overflowY: 'auto'
            }}
@@ -86,7 +99,7 @@ export default function DocsBox({ title, content, onClose, initialX = 100, initi
         {/* Footer - Custom Button Style */}
         <div style={{
             padding: '20px',
-            borderTop: `1px solid ${themeColor}`,
+            borderTop: `1px solid ${borderColor}`,
             background: 'rgba(5, 5, 5, 0.9)',
             display: 'flex',
             justifyContent: 'flex-end',
@@ -97,9 +110,9 @@ export default function DocsBox({ title, content, onClose, initialX = 100, initi
                 onClick={onLaunchStream}
                 className="btn-terminal-access"
                 style={{
-                    '--btn-color': themeColor,
-                    justifyContent: 'center', // Center text since icon is gone
-                    width: '100%' // Make it full width/chunky like the image implies if it's the only element? Or keep it right aligned. User said "remove the refresh button", implies keeping position. Let's keep flex-end but maybe make the button a bit more substantial if single.
+                    '--btn-color': primaryColor,
+                    justifyContent: 'center', 
+                    width: '100%' 
                 }}
             >
                 <span className="text">TERMINAL_ACCESS</span>

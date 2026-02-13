@@ -5,7 +5,7 @@
     "themeClass": "theme-untrusted",
     "isCritical": true,
     "cardTitle": "Untrusted<T>",
-    "cardDesc": "WARNING: UNTRUSTED UNPUTS. CLICK FOR PROTOCOLS.",
+    "cardDesc": "WARNING: UNTRUSTED INPUTS. CLICK FOR PROTOCOLS.",
     "cardTags": ["SEC4AUDIT", ".UT", "COMPILER"],
     "cardSecurityLevel": "CRITICAL",
     "cardInitialX": 500,
@@ -13,6 +13,15 @@
     "navLabel": "Untrusted_Sec",
     "dialogTitle": "UNTRUSTED_SUMMARY",
     "summaryContent": "## Untrusted<T> Language\n\nA backend-focused, AI-operable programming language with security-by-construction.\n\n### Core Concepts\n- **Untrusted<T>**: Tainted data wrapper that prevents accidental usage in sensitive sinks.\n- **sec4Audit**: The official compiler and security policy enforcer.\n- **Policy-as-Code**: Define security gates directly in your codebase.\n\n### Security Levels\n- **NORMAL**: Standard operation.\n- **CRITICAL**: Requires explicit declassification or endorsement.\n",
-    "streamContent": "\n## Untrusted<T> Security Protocol // v2.1\n\nWARNING: POTENTIAL TAINT DETECTED\nINITTIATING SEC4AUDIT SCANS...\nTarget: BACKEND SECURITY PRIMITIVES\n\n### > TRANSMISSION START\n\n**Untrusted<T>** is a backend-focused, AI-operable programming language primitive that enforces \"Security by Construction\". It wraps tainted data types to prevent accidental usage in sensitive sinks.\n\n### > SECURITY GATES\n\n*   **Taint Tracking**: Wraps all external inputs in `Untrusted<T>`.\n*   **sec4Audit Compiler**: Enforces policy-as-code before build.\n*   **Explicit Declassification**: Requires intentional developer override for critical operations.\n\n### > THREAT LEVELS\n\n*   **NORMAL**: Standard operation permitted.\n*   **CRITICAL**: Requires explicit endorsement signatures.\n\n### > ACCESS REPO\n```bash\ngit clone github.com/HubDev-AI/untrusted-compiler\n```\n  "
+    "themeColors": {
+      "primary": "#ff0000",
+      "accent": "#ffae00"
+    },
+    "boxTheme": {
+        "color": "#e0e0e0", 
+        "borderColor": "#e0e0e0",
+        "textColor": "#ffffff"
+    },
+    "streamContent": "\n## Untrusted<T> Security Protocol // v2.1\n\nWARNING: POTENTIAL TAINT DETECTED\nINITIATING SEC4AUDIT SCANS...\nTarget: BACKEND SECURITY PRIMITIVES\n\n### > TRANSMISSION START\n\n**Untrusted<T>** is a backend-focused, AI-operable programming language primitive that enforces \"Security by Construction\". It wraps tainted data types to prevent accidental usage in sensitive sinks.\n\n### > SECURITY GATES\n\n*   **Taint Tracking**: Wraps all external inputs in `Untrusted<T>`.\n*   **sec4Audit Compiler**: Enforces policy-as-code before build.\n*   **Explicit Declassification**: Requires intentional developer override for critical operations.\n\n### > THREAT LEVELS\n\n*   **NORMAL**: Standard operation permitted.\n*   **CRITICAL**: Requires explicit endorsement signatures.\n\n### > ACCESS REPO\n```bash\ngit clone github.com/HubDev-AI/untrusted-compiler\n```\n  "
   }
 ]
