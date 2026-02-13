@@ -100,6 +100,10 @@ function App() {
         
         {/* Particles */}
         <Particles />
+        
+        {/* Atmospheric Polish */}
+        <div className="vignette"></div>
+        <div className="scanline"></div>
       </div>
 
       {/* 
