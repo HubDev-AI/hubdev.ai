@@ -36,40 +36,69 @@ const DOCS_DATA = {
   `
 };
 
+// Atmospheric Ash / Embers (Slow Vertical Drift)
 const Particles = () => {
     const [particles, setParticles] = useState([]);
   
     useEffect(() => {
       const interval = setInterval(() => {
         const id = Math.random();
+        // Random placement across screen
         const startX = Math.random() * 100 + '%';
-        const startY = Math.random() * 100 + '%';
-        const delay = Math.random() * 2 + 's';
+        const startY = '110%'; // Start below screen
         
-        setParticles(prev => [...prev.slice(-20), { id, startX, startY, delay }]);
-      }, 200);
+        // Very slow, random duration
+        const duration = 5 + Math.random() * 10 + 's';
+        const size = Math.random() * 3 + 'px';
+        
+        setParticles(prev => [...prev.slice(-50), { id, startX, startY, duration, size }]);
+      }, 300); // Gentle spawn rate
       return () => clearInterval(interval);
     }, []);
   
     return (
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', perspective: '500px', pointerEvents: 'none' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'hidden' }}>
         {particles.map(p => (
            <div 
              key={p.id}
-             className="particle"
+             className="particle-ash"
              style={{ 
                left: p.startX, 
                top: p.startY,
-               animationDelay: p.delay 
+               width: p.size,
+               height: p.size,
+               animation: `ash-float ${p.duration} linear forwards`
              }} 
            />
         ))}
+        <style>{`
+          @keyframes ash-float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.8; }
+            80% { opacity: 0.4; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+          }
+        `}</style>
       </div>
     );
   };
 
 function App() {
   const [activeDoc, setActiveDoc] = useState(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  // Parallax Logic - Subtler for "Massive" feel
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      // Normalize mouse coordinates (-1 to 1)
+      const x = (e.clientX / window.innerWidth) * 2 - 1;
+      const y = (e.clientY / window.innerHeight) * 2 - 1;
+      setMousePos({ x, y });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   const handleOpenDocs = (projectKey) => {
     setActiveDoc(projectKey);
@@ -80,55 +109,70 @@ function App() {
   };
 
   return (
-    <div style={{ 
-      width: '100vw', 
-      height: '100vh', 
-      position: 'relative', 
-      background: '#000',
-      overflow: 'hidden'
-    }}>
-      {/* 3D Immersive Tunnel */}
-      <div className="tron-grid-container">
+    <div className="tron-scene">
+      {/* Parallax Container */}
+      <div 
+        className="tron-grid-container"
+        style={{
+          transform: `rotateX(${15 - mousePos.y * 2}deg) rotateY(${mousePos.x * 2}deg)` // Reduced movement for "heaviness"
+        }}
+      >
         <div className="tron-grid tron-grid-floor" />
         <div className="tron-grid tron-grid-ceiling" />
+        
+        {/* Smoldering Core */}
+        <div className="tron-sun" />
+        
         <div className="tron-horizon-glow" />
       </div>
       
-      {/* Moving Data Particles */}
+      {/* Drifting Ash */}
       <Particles />
 
-      {/* Texture Overlays */}
+      {/* Ash Texture Overlay */}
       <div className="noise-overlay" />
 
-      {/* Global Header HUD */}
+      {/* Global Header HUD - Industrial Style */}
       <header style={{
         position: 'absolute',
         top: 0,
         left: 0,
         width: '100%',
-        height: '60px',
-        borderBottom: '1px solid rgba(0, 240, 255, 0.2)',
-        background: 'rgba(5, 10, 15, 0.6)',
+        height: '70px',
+        borderBottom: '2px solid var(--neon-red)',
+        background: 'linear-gradient(to bottom, #110000, rgba(17, 0, 0, 0.8))',
         backdropFilter: 'blur(5px)',
         zIndex: 100,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '0 40px',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        boxShadow: '0 5px 20px rgba(255, 0, 0, 0.2)'
       }}>
-        <h1 className="glitch-text" data-text="HUBDEV_AI // SYSTEM_CORE" style={{
-          margin: 0,
-          fontSize: '1.5rem',
-          fontWeight: 700,
-          color: 'var(--neon-cyan)',
-          letterSpacing: '2px'
-        }}>
-          HUBDEV_AI // SYSTEM_CORE
-        </h1>
-        <div style={{ display: 'flex', gap: '20px', fontSize: '0.8rem', color: '#666' }}>
-          <span>STATUS: <span style={{ color: 'var(--matrix-green)' }}>ONLINE</span></span>
-          <span>SEC_LEVEL: <span style={{ color: 'var(--neon-red)' }}>MAXIMUM</span></span>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <h1 className="glitch-text" data-text="HUBDEV_AI // DILLINGER_GRID" style={{
+            margin: 0,
+            fontSize: '1.8rem',
+            fontWeight: 800,
+            color: 'var(--neon-red)',
+            letterSpacing: '4px',
+            textTransform: 'uppercase'
+            }}>
+            HUBDEV_AI // DILLINGER_GRID
+            </h1>
+            <span style={{ fontSize: '0.7rem', color: '#666', letterSpacing: '2px', marginTop: '4px' }}>
+                ACCESS_LEVEL: RESTRICTED
+            </span>
+        </div>
+
+        <div style={{ display: 'flex', gap: '30px', fontSize: '0.8rem', color: '#888', fontWeight: 'bold' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            SYSTEM: <span style={{ color: '#fff', textShadow: '0 0 5px #fff' }}>ONLINE</span>
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+             THREAT: <span style={{ color: 'var(--neon-orange)' }}>ELEVATED</span>
+          </span>
         </div>
       </header>
 
@@ -182,9 +226,10 @@ function App() {
         <div style={{ color: 'var(--text-color)', fontFamily: 'var(--font-tech)' }}>
           <h4 style={{ 
             margin: '0 0 10px 0', 
-            color: 'var(--neon-cyan)', 
-            borderBottom: '1px solid var(--neon-cyan)',
-            paddingBottom: '5px'
+            color: 'var(--neon-red)', 
+            borderBottom: '1px solid var(--neon-red)',
+            paddingBottom: '5px',
+            textShadow: '0 0 5px var(--neon-red)'
           }}>
             ECOSYSTEM_MANIFEST_V2
           </h4>
@@ -196,20 +241,20 @@ function App() {
             lineHeight: '1.8' 
           }}>
             <li style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: '#888' }}>BRAND:</span>
-              <span>sec4Audit</span>
+              <span style={{ color: '#666' }}>BRAND:</span>
+              <span style={{ color: '#fff' }}>sec4Audit</span>
             </li>
             <li style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: '#888' }}>COMPILER:</span>
-              <span>sec4Audit CLI</span>
+              <span style={{ color: '#666' }}>COMPILER:</span>
+              <span style={{ color: '#fff' }}>sec4Audit CLI</span>
             </li>
             <li style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: '#888' }}>POLICY:</span>
-              <span>audit / explain / gate</span>
+              <span style={{ color: '#666' }}>POLICY:</span>
+              <span style={{ color: '#fff' }}>audit / explain / gate</span>
             </li>
             <li style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: '#888' }}>EXT:</span>
-              <span style={{ color: 'var(--neon-red)' }}>.ut / .un</span>
+              <span style={{ color: '#666' }}>EXT:</span>
+              <span style={{ color: 'var(--neon-orange)' }}>.ut / .un</span>
             </li>
           </ul>
         </div>

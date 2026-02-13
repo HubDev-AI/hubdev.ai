@@ -1,14 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
 :root {
-  /* Deep void background */
-  --bg-color: #000000;
-  --text-color: #e0e0e0;
-  --neon-red: #ff003c;
-  --neon-cyan: #00f0ff;
-  --matrix-green: #0aff0a;
-  --hud-bg: rgba(5, 10, 15, 0.9);
-  --hud-border: rgba(0, 240, 255, 0.6);
+  /* Ares / Dillinger Grid Palette - Smoldering */
+  --bg-color: #020202; 
+  --text-color: #d0d0d0;
+  --neon-red: #ff003c; 
+  --neon-orange: #ff3c00; 
+  --neon-cyan: #ff003c; 
+  --industrial-metal: #1a1a1a;
+  --hud-bg: rgba(20, 5, 5, 0.95); 
+  --hud-border: rgba(255, 0, 60, 0.8);
   --font-tech: 'Share Tech Mono', 'Courier New', monospace;
 }
 
@@ -29,154 +30,178 @@ body {
 }
 
 /* 
-  TRON LEGACY High-Fidelity Grid 
-  - Darker void
-  - Finer lines
-  - Intense Horizon with Pulse
+  TRON: ARES SCENE - Heavy/Majestic
 */
-.tron-grid-container {
+.tron-scene {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 50% 50%, #051015 0%, #000000 80%); /* Centered Tunnel Glow */
+  perspective: 800px;
   overflow: hidden;
-  perspective: 400px; /* Deeper tunnel perspective */
-  z-index: 0;
+  /* Deep Red Atmospheric Fog - Darker */
+  background: radial-gradient(circle at 50% 60%, #1a0505 0%, #000000 95%);
 }
 
-.tron-grid {
+.tron-grid-container {
   position: absolute;
-  top: 0;
+  top: -50%;
   left: -50%;
   width: 200%;
   height: 200%;
-  /* Finer grid lines with double-glow effect */
+  transform-style: preserve-3d; 
+}
+
+/* 
+  Reflective Metal Grid - Slow Crawl
+*/
+.tron-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Sharp, aggressive red lines on dark metal */
   background-image: 
-    linear-gradient(rgba(0, 240, 255, 0.4) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 240, 255, 0.4) 1px, transparent 1px);
-  background-size: 60px 60px; /* Tighter grid */
-  transform-origin: 50% 0%;
-  animation: grid-scroll 3s linear infinite; /* Faster, smoother flow */
-  /* Fade out into distance */
-  mask-image: linear-gradient(to bottom, transparent 5%, black 30%, black 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 5%, black 30%, black 100%);
-  box-shadow: 0 0 100px rgba(0, 240, 255, 0.1);
+    linear-gradient(rgba(255, 0, 60, 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 0, 60, 0.2) 1px, transparent 1px);
+  background-size: 100px 100px; 
+  animation: grid-scroll 20s linear infinite; /* MAJESTIC CRAWL */
+  
+  box-shadow: 0 0 150px rgba(255, 0, 60, 0.1); /* Subtle glow */
+  mask-image: linear-gradient(to bottom, transparent 5%, black 40%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 5%, black 40%, black 100%);
 }
 
 .tron-grid-floor {
-  transform: rotateX(80deg) translateY(-100px) translateZ(-200px);
+  transform: rotateX(85deg) translateY(0) translateZ(0);
+  transform-origin: 50% 50%;
+  top: 25%;
+  opacity: 0.6; /* Reduced intensity */
 }
 
 .tron-grid-ceiling {
-  transform: rotateX(-80deg) translateY(100px) translateZ(-200px);
-  top: auto;
-  bottom: 0;
-  transform-origin: 50% 100%;
+  transform: rotateX(-85deg) translateY(0) translateZ(0);
+  transform-origin: 50% 50%;
+  top: -25%;
+  opacity: 0.2; /* Very subtle ceiling */
+  mask-image: linear-gradient(to top, transparent 10%, black 40%, black 100%);
+  -webkit-mask-image: linear-gradient(to top, transparent 10%, black 40%, black 100%);
+}
+
+/* 
+  The Monolith / Red Sun - Smoldering
+*/
+.tron-sun {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; 
+  height: 150px; 
+  background: radial-gradient(ellipse, rgba(100, 0, 20, 0.8) 0%, rgba(50, 0, 0, 0.5) 50%, transparent 80%);
+  z-index: 1;
+  pointer-events: none;
+  filter: blur(30px);
+  /* Slow Heartbeat */
+  animation: pulse-core 8s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-core {
+  0% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.05); }
 }
 
 .tron-horizon-glow {
   position: absolute;
-  top: 35%; /* Center of the tunnel */
+  top: 49%; 
   left: 0;
   width: 100%;
-  height: 30%;
-  background: radial-gradient(ellipse at 50% 50%, rgba(0, 240, 255, 0.2) 0%, transparent 70%);
-  filter: blur(50px);
+  height: 2%;
+  background: white; 
+  box-shadow: 0 0 30px rgba(255, 0, 60, 0.8), 0 0 80px rgba(255, 0, 0, 0.5);
   z-index: 1;
   pointer-events: none;
-  animation: pulse-glow 4s ease-in-out infinite;
-}
-
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.8; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.1); }
+  opacity: 0.5; /* Dimmer horizon */
 }
 
 @keyframes grid-scroll {
   0% { background-position: 0 0; }
-  100% { background-position: 0 60px; }
+  100% { background-position: 0 100px; }
 }
 
+/* Ash / Embers Overlay */
 .noise-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.03;
+  opacity: 0.05; 
   pointer-events: none;
-  z-index: 2;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
+  z-index: 4;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
 }
 
-/* Moving Particles (Data flow) */
-.particle {
-  position: absolute;
-  background: rgba(0, 240, 255, 0.8);
-  width: 2px;
-  height: 2px;
-  border-radius: 50%;
-  box-shadow: 0 0 4px var(--neon-cyan);
-  pointer-events: none;
-  animation: particle-fly 2s linear infinite;
-  opacity: 0;
-}
-
-@keyframes particle-fly {
-  0% { transform: translateZ(0) scale(0.1); opacity: 0; }
-  20% { opacity: 1; }
-  100% { transform: translateZ(400px) scale(2); opacity: 0; }
-}
-
-
-/* Cyber Box - Restored & Styles */
+/* 
+  Physical / Industrial UI 
+*/
 .cyber-box-container {
   position: absolute;
-  filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.2));
+  filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.8)); 
   z-index: 10;
 }
 
 .cyber-box-frame {
-  background: var(--hud-bg);
-  border: 1px solid var(--neon-cyan);
+  background: #0a0101; /* Darker fill */
+  border: 1px solid var(--neon-red);
   position: relative;
-  /* Cinematic angled corners */
   clip-path: polygon(
-    15px 0, 100% 0, 
-    100% calc(100% - 15px), calc(100% - 15px) 100%, 
-    0 100%, 0 15px
+    20px 0, 100% 0, 
+    100% calc(100% - 20px), calc(100% - 20px) 100%, 
+    0 100%, 0 20px
   );
-  transition: all 0.2s ease;
+  
+  /* Carbon Fiber Texture Simulation */
+  background-image: 
+    repeating-linear-gradient(45deg, rgba(0,0,0,0.5) 0px, rgba(0,0,0,0.5) 2px, transparent 2px, transparent 4px),
+    linear-gradient(to bottom, #110000, #000);
+  
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8); 
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .cyber-box-frame::before {
   content: '';
   position: absolute;
-  top: 1px; left: 1px; right: 1px; bottom: 1px;
-  border: 1px solid rgba(0, 240, 255, 0.15);
+  top: 0; left: 0; right: 0; bottom: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   clip-path: inherit;
   pointer-events: none;
 }
 
 /* Critical State */
 .cyber-box-container.critical .cyber-box-frame {
-  border-color: var(--neon-red);
-  box-shadow: inset 0 0 20px rgba(255, 0, 60, 0.15);
+  border-color: var(--neon-orange);
+  background-image: 
+    repeating-linear-gradient(45deg, rgba(255, 60, 0, 0.05) 0px, rgba(255, 60, 0, 0.05) 2px, transparent 2px, transparent 4px),
+    linear-gradient(to bottom, #1a0a00, #000);
 }
 .cyber-box-container.critical {
-  filter: drop-shadow(0 0 10px rgba(255, 0, 60, 0.3));
+  filter: drop-shadow(0 0 15px rgba(255, 60, 0, 0.4)); 
 }
 
 /* Docs Box Styling */
 .docs-content {
-  color: #ccc;
+  color: #aaa;
   font-size: 0.85rem;
   line-height: 1.6;
   max-height: 300px;
   overflow-y: auto;
   padding-right: 10px;
+  font-family: 'Courier New', monospace; 
 }
 .docs-content::-webkit-scrollbar {
   width: 4px;
@@ -185,32 +210,26 @@ body {
   background: #000;
 }
 .docs-content::-webkit-scrollbar-thumb {
-  background: var(--neon-cyan);
+  background: var(--neon-red);
 }
 
-/* Scanline Animation */
-.scanline {
-  width: 100%;
-  height: 20px;
-  z-index: 10;
-  background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0, 240, 255, 0.2) 50%, rgba(0,0,0,0) 100%);
-  opacity: 0.3;
+/* Particle Embers - Ash */
+.particle-ash {
   position: absolute;
-  top: 0;
-  left: 0;
-  animation: scanline-move 4s linear infinite;
+  background: rgba(255, 60, 0, 0.8);
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
   pointer-events: none;
-}
-
-@keyframes scanline-move {
-  0% { top: -20px; }
-  100% { top: 100%; }
+  z-index: 2;
+  opacity: 0;
+  box-shadow: 0 0 4px var(--neon-red);
 }
 
 /* Glitch Utilities */
 .glitch-text {
   position: relative;
-  color: var(--text-color);
+  color: #fff;
 }
 .glitch-text::before, .glitch-text::after {
   content: attr(data-text);
@@ -220,14 +239,18 @@ body {
 .glitch-text::before {
   left: 2px; text-shadow: -1px 0 var(--neon-red);
   clip: rect(24px, 550px, 90px, 0);
-  animation: glitch-anim-1 3s infinite linear alternate-reverse;
+  animation: glitch-anim-1 0.5s infinite linear alternate-reverse; 
 }
 .glitch-text::after {
-  left: -2px; text-shadow: -1px 0 var(--neon-cyan);
+  left: -2px; text-shadow: -1px 0 #fff;
   clip: rect(85px, 550px, 140px, 0);
-  animation: glitch-anim-1 2s infinite linear alternate-reverse;
+  animation: glitch-anim-1 0.3s infinite linear alternate-reverse;
 }
 @keyframes glitch-anim-1 {
   0% { clip: rect(20px, 9999px, 10px, 0); }
   100% { clip: rect(45px, 9999px, 86px, 0); }
+}
+
+.scanline {
+  display: none; 
 }
