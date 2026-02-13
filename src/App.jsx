@@ -338,9 +338,10 @@ function App() {
                     title={activeDocDialog === 'mkly' ? 'MKLY_SUMMARY' : 'UNTRUSTED_SUMMARY'}
                     content={DOCS_DATA[activeDocDialog]}
                     onClose={handleCloseDialog}
-                    initialX={window.innerWidth / 2 - 225}
+                    initialX={window.innerWidth / 2 - 275} // Adjusted for 550px width
                     initialY={window.innerHeight / 2 - 200}
                     onLaunchStream={() => handleLaunchStream(activeDocDialog)}
+                    isCritical={activeDocDialog === 'untrusted'}
                 />
             )}
         </>

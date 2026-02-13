@@ -470,12 +470,105 @@ body {
 }
 
 /* Critical State override */
+/* Critical State override */
 .cyber-box-container.critical .cyber-box-frame {
-  border-color: var(--neon-accent);
+  border-color: rgba(255, 255, 255, 0.85); /* White-ish border */
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1), inset 0 0 20px rgba(255, 60, 0, 0.2);
   background-image: 
-    repeating-linear-gradient(45deg, rgba(255, 60, 0, 0.05) 0px, rgba(255, 60, 0, 0.05) 2px, transparent 2px, transparent 4px),
-    linear-gradient(to bottom, #1a0a00, #000);
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 2px, transparent 2px, transparent 4px),
+    linear-gradient(to bottom, #1a0505, #000); /* Slightly reddish dark bg */
 }
 .cyber-box-container.critical {
-  filter: drop-shadow(0 0 20px rgba(255, 60, 0, 0.3)); 
+  filter: drop-shadow(0 0 25px rgba(255, 60, 0, 0.5)); /* Stronger Red Glow outer */
+}
+
+/* 
+  TERMINAL ACCESS BUTTON STYLE 
+*/
+.btn-terminal-access {
+  position: relative;
+  background: var(--btn-color); /* Dynamic */
+  color: #000;
+  border: none;
+  padding: 10px 30px;
+  font-family: var(--font-tech);
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  
+  /* Chamfered Corners */
+  clip-path: polygon(
+    15px 0, 100% 0, 
+    100% calc(100% - 15px), calc(100% - 15px) 100%, 
+    0 100%, 0 15px
+  );
+  
+  /* Scanline Texture Overlay */
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.2) 2px,
+    rgba(0, 0, 0, 0.2) 4px
+  );
+  
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.btn-terminal-access:hover {
+  filter: brightness(1.2);
+  transform: translateX(2px);
+  box-shadow: 0 0 20px var(--btn-color);
+}
+
+.btn-terminal-access .icon {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.btn-terminal-secondary {
+  width: 45px;
+  height: 100%; /* Matches parent flex height essentially, but better to set fixed */
+  min-height: 42px; /* Approx match */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--btn-color);
+  color: var(--btn-color);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  /* Corner markings styling could go here, keeping simple for now */
+  position: relative;
+}
+
+.btn-terminal-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.btn-terminal-secondary::before,
+.btn-terminal-secondary::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--btn-color);
+  transition: all 0.2s ease;
+}
+
+.btn-terminal-secondary::before {
+  top: 0; left: 0;
+  border-right: none; border-bottom: none;
+}
+.btn-terminal-secondary::after {
+  bottom: 0; right: 0;
+  border-left: none; border-top: none;
 }
