@@ -1,13 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
 :root {
-  --bg-color: #020204; /* Deepest black-blue */
+  /* Deep void background */
+  --bg-color: #000000;
   --text-color: #e0e0e0;
-  --neon-red: #ff3333; /* Slightly softer neon red */
-  --neon-cyan: #4deeea; /* Tron Legacy Cyan */
+  --neon-red: #ff003c;
+  --neon-cyan: #00f0ff;
   --matrix-green: #0aff0a;
-  --hud-bg: rgba(6, 15, 20, 0.85); /* Glassier, dark teal tint */
-  --hud-border: rgba(77, 238, 234, 0.6);
+  --hud-bg: rgba(5, 10, 15, 0.9);
+  --hud-border: rgba(0, 240, 255, 0.6);
   --font-tech: 'Share Tech Mono', 'Courier New', monospace;
 }
 
@@ -27,15 +28,19 @@ body {
   height: 100%;
 }
 
-/* Tron Background - Perspective Grid & Atmosphere */
+/* 
+  TRON LEGACY High-Fidelity Grid 
+  - Darker void
+  - Finer lines
+  - Intense Horizon
+*/
 .tron-grid-container {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  /* Atmospheric Gradient: Deep blueish-black to pure black */
-  background: radial-gradient(circle at 50% 0%, #111820 0%, #05080a 40%, #000000 90%);
+  background: radial-gradient(circle at 50% 0%, #051015 0%, #000000 70%); /* Subtle atmosphere */
   overflow: hidden;
   perspective: 600px; /* Slightly deeper perspective */
   z-index: 0;
@@ -44,56 +49,56 @@ body {
 .tron-grid {
   position: absolute;
   top: 0;
-  left: -100%;
-  width: 300%;
+  left: -50%;
+  width: 200%;
   height: 200%;
+  /* Finer grid lines with double-glow effect */
   background-image: 
-    linear-gradient(rgba(77, 238, 234, 0.4) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(77, 238, 234, 0.4) 1px, transparent 1px);
+    linear-gradient(rgba(0, 240, 255, 0.4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.4) 1px, transparent 1px);
   background-size: 60px 60px; /* Tighter grid */
+  transform: rotateX(75deg) translateY(-100px) translateZ(-200px);
   transform-origin: 50% 0%;
-  animation: grid-scroll 8s linear infinite;
-  
-  /* Mask to fade grid into distance (fog effect) */
-  mask-image: radial-gradient(ellipse at 50% 10%, black 10%, transparent 60%);
-  -webkit-mask-image: radial-gradient(ellipse at 50% 0%, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
+  animation: grid-scroll 3s linear infinite; /* Faster, smoother flow */
+  /* Fade out into distance */
+  mask-image: linear-gradient(to bottom, transparent 5%, black 40%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 5%, black 40%, black 100%);
+  box-shadow: 0 0 100px rgba(0, 240, 255, 0.1);
 }
 
 .tron-horizon-glow {
   position: absolute;
-  top: 30%; /* Start glow lower to match new perspective */
+  top: 25%; /* Adjusted for new perspective */
   left: 0;
   width: 100%;
-  height: 20%;
-  /* Subtle cyan bloom at the horizon */
-  background: radial-gradient(ellipse at 50% 50%, rgba(77, 238, 234, 0.15) 0%, transparent 70%);
+  height: 150px;
+  background: linear-gradient(to bottom, rgba(0, 240, 255, 0.3) 0%, transparent 100%);
+  filter: blur(40px);
   z-index: 1;
   pointer-events: none;
-  filter: blur(20px);
 }
 
 @keyframes grid-scroll {
-  0% { transform: rotateX(80deg) translateY(0) translateZ(-100px); }
-  100% { transform: rotateX(80deg) translateY(60px) translateZ(-100px); }
+  0% { transform: rotateX(75deg) translateY(0) translateZ(-200px); }
+  100% { transform: rotateX(75deg) translateY(60px) translateZ(-200px); }
 }
 
-/* Texture Overlay - Subtle Film Grain */
 .noise-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.03; /* Very subtle */
+  opacity: 0.03;
   pointer-events: none;
   z-index: 2;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
 }
 
-/* Cyber Box - Layered Depth */
+/* Cyber Box - Restored & Styles */
 .cyber-box-container {
   position: absolute;
-  filter: drop-shadow(0 0 10px rgba(77, 238, 234, 0.2));
+  filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.2));
   z-index: 10;
 }
 
@@ -101,20 +106,20 @@ body {
   background: var(--hud-bg);
   border: 1px solid var(--neon-cyan);
   position: relative;
+  /* Cinematic angled corners */
   clip-path: polygon(
     15px 0, 100% 0, 
     100% calc(100% - 15px), calc(100% - 15px) 100%, 
     0 100%, 0 15px
   );
-  box-shadow: inset 0 0 20px rgba(77, 238, 234, 0.05); /* Inner atmospheric glow */
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .cyber-box-frame::before {
   content: '';
   position: absolute;
   top: 1px; left: 1px; right: 1px; bottom: 1px;
-  border: 1px solid rgba(77, 238, 234, 0.15);
+  border: 1px solid rgba(0, 240, 255, 0.15);
   clip-path: inherit;
   pointer-events: none;
 }
@@ -122,83 +127,71 @@ body {
 /* Critical State */
 .cyber-box-container.critical .cyber-box-frame {
   border-color: var(--neon-red);
-  box-shadow: inset 0 0 20px rgba(255, 51, 51, 0.1);
-  filter: drop-shadow(0 0 8px rgba(255, 51, 51, 0.4)); /* Stronger bloom for red */
+  box-shadow: inset 0 0 20px rgba(255, 0, 60, 0.15);
 }
 .cyber-box-container.critical {
-  filter: drop-shadow(0 0 15px rgba(255, 51, 51, 0.3));
+  filter: drop-shadow(0 0 10px rgba(255, 0, 60, 0.3));
 }
 
 /* Docs Box Styling */
 .docs-content {
-  color: #c0ccec; /* Cooler white */
-  font-size: 0.9rem;
+  color: #ccc;
+  font-size: 0.85rem;
   line-height: 1.6;
   max-height: 300px;
   overflow-y: auto;
   padding-right: 10px;
-  text-shadow: 0 0 2px rgba(0,0,0,0.5);
 }
 .docs-content::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 .docs-content::-webkit-scrollbar-track {
-  background: rgba(0,0,0,0.3);
+  background: #000;
 }
 .docs-content::-webkit-scrollbar-thumb {
   background: var(--neon-cyan);
-  border-radius: 3px;
 }
 
-/* Glitch Animation */
-@keyframes glitch-anim-1 {
-  0% { clip: rect(20px, 9999px, 10px, 0); }
-  100% { clip: rect(45px, 9999px, 86px, 0); }
-}
-
-.glitch-text {
-  position: relative;
-  color: var(--text-color);
-  text-shadow: 0 0 5px rgba(77, 238, 234, 0.5); /* Text bloom */
-}
-
-.glitch-text::before,
-.glitch-text::after {
-  content: attr(data-text);
+/* Scanline Animation */
+.scanline {
+  width: 100%;
+  height: 20px;
+  z-index: 10;
+  background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0, 240, 255, 0.2) 50%, rgba(0,0,0,0) 100%);
+  opacity: 0.3;
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.glitch-text::before {
-  left: 2px;
-  text-shadow: -1px 0 var(--neon-red);
-  clip: rect(24px, 550px, 90px, 0);
-  animation: glitch-anim-1 3s infinite linear alternate-reverse;
-}
-
-.glitch-text::after {
-  left: -2px;
-  text-shadow: -1px 0 var(--neon-cyan);
-  clip: rect(85px, 550px, 140px, 0);
-  animation: glitch-anim-1 2s infinite linear alternate-reverse;
-}
-
-.scanline {
-  width: 100%;
-  height: 100px;
-  z-index: 10;
-  background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(77, 238, 234, 0.1) 50%, rgba(0,0,0,0) 100%);
-  opacity: 0.3;
-  position: absolute;
-  bottom: 100%;
-  animation: scanline 8s linear infinite;
+  animation: scanline-move 4s linear infinite;
   pointer-events: none;
 }
 
-@keyframes scanline {
-  0% { bottom: 100%; }
-  100% { bottom: -100px; }
+@keyframes scanline-move {
+  0% { top: -20px; }
+  100% { top: 100%; }
+}
+
+/* Glitch Utilities */
+.glitch-text {
+  position: relative;
+  color: var(--text-color);
+}
+.glitch-text::before, .glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+}
+.glitch-text::before {
+  left: 2px; text-shadow: -1px 0 var(--neon-red);
+  clip: rect(24px, 550px, 90px, 0);
+  animation: glitch-anim-1 3s infinite linear alternate-reverse;
+}
+.glitch-text::after {
+  left: -2px; text-shadow: -1px 0 var(--neon-cyan);
+  clip: rect(85px, 550px, 140px, 0);
+  animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+@keyframes glitch-anim-1 {
+  0% { clip: rect(20px, 9999px, 10px, 0); }
+  100% { clip: rect(45px, 9999px, 86px, 0); }
 }
