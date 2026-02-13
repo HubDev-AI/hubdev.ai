@@ -1,7 +1,25 @@
 import { motion } from 'framer-motion';
-import React from 'react';
+import React, { useRef } from 'react';
 
 const DraggableBox = ({ children, initialX = 0, initialY = 0, className = "", isCritical = false }) => {
+  const wasDragged = useRef(false);
+
+  const handleDragStart = () => {
+    wasDragged.current = true;
+  };
+
+  const handleDragEnd = () => {
+    // Keep wasDragged true briefly so the click event is suppressed
+    setTimeout(() => { wasDragged.current = false; }, 0);
+  };
+
+  const handleClick = (e) => {
+    if (wasDragged.current) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+  };
+
   return (
     <motion.div
       drag
@@ -11,12 +29,15 @@ const DraggableBox = ({ children, initialX = 0, initialY = 0, className = "", is
       style={{ position: 'absolute' }}
       whileHover={{ scale: 1.02, zIndex: 100 }}
       whileTap={{ scale: 0.98 }}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onClickCapture={handleClick}
     >
       <div className="cyber-box-frame">
         {/* Inner Content Container */}
         <div style={{
           padding: '24px',
-          background: 'rgba(0,0,0,0.4)', // Slightly darken inner content for contrast
+          background: 'rgba(0,0,0,0.4)',
           backdropFilter: 'blur(2px)',
           position: 'relative',
           overflow: 'hidden' 
@@ -44,3 +65,4 @@ const DraggableBox = ({ children, initialX = 0, initialY = 0, className = "", is
 };
 
 export default DraggableBox;
+

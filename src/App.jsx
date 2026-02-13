@@ -175,7 +175,10 @@ function App() {
             boxShadow: '0 5px 20px rgba(0,0,0, 0.5)',
             transition: 'border-color 0.5s ease'
         }}>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div 
+                onClick={handleReturnToOverview} 
+                style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
+            >
                 <h1 className="glitch-text" data-text="HUBDEV_AI // SYSTEM_V2" style={{
                 margin: 0,
                 fontSize: '1.8rem',
@@ -244,16 +247,28 @@ function App() {
             </DraggableBox>
             
             {activeDialogProject && (
-                <DocsBox 
-                    title={activeDialogProject.dialogTitle}
-                    content={activeDialogProject.summaryContent}
-                    onClose={handleCloseDialog}
-                    initialX={window.innerWidth / 2 - 275}
-                    initialY={window.innerHeight / 2 - 200}
-                    onLaunchStream={() => handleLaunchStream(activeDialogProject.id)}
-                    isCritical={activeDialogProject.isCritical}
-                    boxTheme={activeDialogProject.boxTheme} // Use specific box theme
-                />
+                <>
+                    {/* Backdrop overlay - click outside to close */}
+                    <div 
+                        onClick={handleCloseDialog}
+                        style={{
+                            position: 'fixed',
+                            inset: 0,
+                            zIndex: 999,
+                            background: 'rgba(0, 0, 0, 0.4)',
+                        }}
+                    />
+                    <DocsBox 
+                        title={activeDialogProject.dialogTitle}
+                        content={activeDialogProject.summaryContent}
+                        onClose={handleCloseDialog}
+                        initialX={window.innerWidth / 2 - 275}
+                        initialY={window.innerHeight / 2 - 200}
+                        onLaunchStream={() => handleLaunchStream(activeDialogProject.id)}
+                        isCritical={activeDialogProject.isCritical}
+                        boxTheme={activeDialogProject.boxTheme}
+                    />
+                </>
             )}
             
             {/* Animated Hologram - Overview Only */}
