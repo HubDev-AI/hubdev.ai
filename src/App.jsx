@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Terminal, Shield, Cpu, Activity, Lock, Unlock, AlertTriangle } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
+import React, { useState, useEffect, useRef } from 'react';
 import Particles from './components/Particles';
 import DraggableBox from './components/DraggableBox';
 import ProjectCard from './components/ProjectCard';
@@ -31,6 +29,23 @@ function App() {
   const [activeDocDialog, setActiveDocDialog] = useState(null); // project.id
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
+  // Track which streams have completed their animation (per-project)
+  const loadedStreamsRef = useRef((() => {
+    const set = new Set();
+    // If initial URL has ?loaded, mark the current project as loaded
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('loaded')) {
+      const projectId = getViewModeFromPath(window.location.pathname);
+      if (projectId !== VIEW_MODES.OVERVIEW) {
+        set.add(projectId);
+      }
+    }
+    return set;
+  })());
+  // Force re-render trigger when loadedStreams changes
+  const [, forceUpdate] = useState(0);
+  const loadedStreams = loadedStreamsRef.current;
+
   // Handle Mouse Move for Parallax
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -46,29 +61,84 @@ function App() {
   // Handle browser back/forward navigation
   useEffect(() => {
     const handlePopState = () => {
-      setViewMode(getViewModeFromPath(window.location.pathname));
+      const newMode = getViewModeFromPath(window.location.pathname);
+      setViewMode(newMode);
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  // Sync URL and document title when viewMode changes
+  // Sync URL, document title, and SEO meta tags when viewMode changes
   useEffect(() => {
-    // Update URL
-    const targetPath = viewMode === VIEW_MODES.OVERVIEW ? '/' : `/${viewMode}`;
-    if (window.location.pathname !== targetPath) {
+    const baseUrl = 'https://hubdev.ai';
+    const defaultTitle = 'HubDev AI — Next-Gen Developer Tools & Security Primitives';
+    const defaultDesc = "Explore HubDev AI's cutting-edge developer tools: mkly, a human-readable markup language that compiles to HTML5, and Untrusted<T>, a backend security primitive enforcing security-by-construction.";
+
+    // Build target URL — include ?loaded if this project was already loaded
+    let targetPath = viewMode === VIEW_MODES.OVERVIEW ? '/' : `/${viewMode}`;
+    if (viewMode !== VIEW_MODES.OVERVIEW && loadedStreams.has(viewMode)) {
+      const project = projects.find(p => p.id === viewMode);
+      if (project) {
+        targetPath = `/${viewMode}?loaded=${project.streamContent.length}`;
+      }
+    }
+
+    const currentFullPath = window.location.pathname + window.location.search;
+    if (currentFullPath !== targetPath) {
       window.history.pushState({ viewMode }, '', targetPath);
     }
 
-    // Update document title
+    let title, description, url;
+
     if (viewMode === VIEW_MODES.OVERVIEW) {
-      document.title = 'HubDev AI — Next-Gen Developer Tools & Security Primitives';
+      title = defaultTitle;
+      description = defaultDesc;
+      url = `${baseUrl}/`;
     } else {
       const project = projects.find(p => p.id === viewMode);
       if (project) {
-        document.title = `${project.title} — HubDev AI`;
+        title = `${project.title} — HubDev AI`;
+        description = project.seoDescription || defaultDesc;
+        url = `${baseUrl}/${project.id}`;
+      } else {
+        title = defaultTitle;
+        description = defaultDesc;
+        url = `${baseUrl}/`;
       }
     }
+
+    // Document title
+    document.title = title;
+
+    // Helper to update or create a meta tag
+    const setMeta = (attr, key, content) => {
+      let el = document.querySelector(`meta[${attr}="${key}"]`);
+      if (el) {
+        el.setAttribute('content', content);
+      } else {
+        el = document.createElement('meta');
+        el.setAttribute(attr, key);
+        el.setAttribute('content', content);
+        document.head.appendChild(el);
+      }
+    };
+
+    // Update meta tags
+    setMeta('name', 'description', description);
+
+    // Canonical URL
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) canonical.setAttribute('href', url);
+
+    // Open Graph
+    setMeta('property', 'og:title', title);
+    setMeta('property', 'og:description', description);
+    setMeta('property', 'og:url', url);
+
+    // Twitter
+    setMeta('property', 'twitter:title', title);
+    setMeta('property', 'twitter:description', description);
+    setMeta('property', 'twitter:url', url);
   }, [viewMode]);
 
   // Update Body Theme Class and Colors based on viewMode
@@ -102,9 +172,7 @@ function App() {
   };
 
   const handleLaunchStream = (key) => {
-    // 1. Close Dialog
     setActiveDocDialog(null);
-    // 2. Switch View Mode to project ID (URL will update via useEffect)
     setViewMode(key);
   };
 
@@ -116,9 +184,13 @@ function App() {
   const activeDialogProject = activeDocDialog ? projects.find(p => p.id === activeDocDialog) : null;
   const activeStreamProject = viewMode !== VIEW_MODES.OVERVIEW ? projects.find(p => p.id === viewMode) : null;
 
-  // Stable handler using useCallback
-  const handleStreamComplete = React.useCallback(() => {
-    console.log('Stream Complete');
+  // When stream finishes, mark it loaded and update URL
+  const handleStreamComplete = React.useCallback((packetCount) => {
+    const projectId = window.location.pathname.replace(/^\//, '');
+    loadedStreams.add(projectId);
+    const path = window.location.pathname;
+    window.history.replaceState(null, '', `${path}?loaded=${packetCount}`);
+    forceUpdate(n => n + 1);
   }, []);
 
 
@@ -283,6 +355,7 @@ function App() {
             <CinematicStream 
                 content={activeStreamProject.streamContent}
                 onComplete={handleStreamComplete}
+                skipAnimation={loadedStreams.has(viewMode)}
             />
         )}
 

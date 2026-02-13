@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Terminal, Shield, Cpu, Lock } from 'lucide-react';
 
 const ProjectCard = ({ title, description, localPath, links, tags, securityLevel = "NORMAL" }) => {
   const isCritical = securityLevel === "CRITICAL";
   const statusColor = isCritical ? 'var(--neon-red)' : 'var(--neon-cyan)';
+
+  // Stable random ID that doesn't change on re-render
+  const sysId = useMemo(() => Math.floor(Math.random() * 99999).toString().padStart(5, '0'), []);
 
   // Scrub PII if present (failsafe, though we will pass generic paths from App.jsx)
   const displayPath = localPath ? localPath.replace(/\/Users\/[^\/]+/, '~') : '';
@@ -20,7 +23,7 @@ const ProjectCard = ({ title, description, localPath, links, tags, securityLevel
         marginBottom: '15px'
       }}>
         <div style={{ fontSize: '0.7rem', color: statusColor, letterSpacing: '2px' }}>
-          SYS.ID: {Math.floor(Math.random() * 99999).toString().padStart(5, '0')}
+          SYS.ID: {sysId}
         </div>
         <div style={{ 
           background: statusColor, 

@@ -2,11 +2,12 @@
   {
     "id": "untrusted",
     "title": "untrusted",
+    "seoDescription": "Untrusted<T> is a backend-focused security primitive enforcing security-by-construction through taint tracking, sec4Audit compiler, and policy-as-code.",
     "themeClass": "theme-untrusted",
     "isCritical": true,
     "cardTitle": "Untrusted<T>",
     "cardDesc": "WARNING: UNTRUSTED INPUTS. CLICK FOR PROTOCOLS.",
-    "cardTags": ["SEC4AUDIT", ".UT", "COMPILER"],
+    "cardTags": ["SEC4AUDIT", "AI.UT", "COMPILER"],
     "cardSecurityLevel": "CRITICAL",
     "cardInitialX": 500,
     "cardInitialY": 150,

@@ -1,14 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { markdownComponents } from './markdownComponents';
 
 export default function DocsBox({ title, content, onClose, initialX = 100, initialY = 100, onLaunchStream, isCritical = false, boxTheme }) {
   const [position, setPosition] = useState({ x: initialX, y: initialY });
-  // ... existing state ...
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const contentRef = useRef(null);
 
-  // ... existing handlers ...
   const handleMouseDown = (e) => {
     setIsDragging(true);
     setDragOffset({ x: e.clientX - position.x, y: e.clientY - position.y });
@@ -93,7 +92,7 @@ export default function DocsBox({ title, content, onClose, initialX = 100, initi
              overflowY: 'auto'
            }}
         >
-          <ReactMarkdown>{content}</ReactMarkdown>
+          <ReactMarkdown components={markdownComponents}>{content}</ReactMarkdown>
         </div>
 
         {/* Footer - Custom Button Style */}

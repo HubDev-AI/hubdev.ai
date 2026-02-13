@@ -1,13 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { markdownComponents } from './markdownComponents';
 
-export default function CinematicStream({ content, onComplete }) {
+export default function CinematicStream({ content, onComplete, skipAnimation = false }) {
   const [displayedContent, setDisplayedContent] = useState('');
   const [isTyping, setIsTyping] = useState(true);
   const scrollRef = useRef(null);
   const indexRef = useRef(0);
 
   useEffect(() => {
+    // If skipping animation, show everything immediately
+    if (skipAnimation) {
+      setDisplayedContent(content);
+      setIsTyping(false);
+      if (onComplete) onComplete(content.length);
+      return;
+    }
+
     // Reset on content change
     indexRef.current = 0;
     setDisplayedContent('');
@@ -18,7 +27,6 @@ export default function CinematicStream({ content, onComplete }) {
       if (cancelled) return;
       
       if (indexRef.current < content.length) {
-        const charToAdd = content.charAt(indexRef.current);
         indexRef.current++;
         setDisplayedContent(content.substring(0, indexRef.current));
         
@@ -30,7 +38,7 @@ export default function CinematicStream({ content, onComplete }) {
         clearInterval(interval);
         if (!cancelled) {
           setIsTyping(false);
-          if (onComplete) onComplete();
+          if (onComplete) onComplete(content.length);
         }
       }
     }, 10); // 10ms per char = high speed data
@@ -39,12 +47,12 @@ export default function CinematicStream({ content, onComplete }) {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [content, onComplete]);
+  }, [content, onComplete, skipAnimation]);
 
   return (
     <div className="cinematic-stream-container">
       <div className="stream-content markdown-body" ref={scrollRef}>
-        <ReactMarkdown>{displayedContent}</ReactMarkdown>
+        <ReactMarkdown components={markdownComponents}>{displayedContent}</ReactMarkdown>
         {isTyping && <span className="stream-cursor">▋</span>}
       </div>
       
@@ -57,3 +65,4 @@ export default function CinematicStream({ content, onComplete }) {
     </div>
   );
 }
+

@@ -2,11 +2,12 @@
   {
     "id": "mkly",
     "title": "mkly",
+    "seoDescription": "mkly is a zero-config, type-safe markup language with Zod schema validation that compiles to clean, semantic HTML5. Built for AI-human collaboration.",
     "themeClass": "theme-mkly",
     "isCritical": false,
     "cardTitle": "mkly",
     "cardDesc": "TARGET: MARKUP LANGUAGE. CLICK FOR SPECS.",
-    "cardTags": ["MARKUP", "AI_Interface", "V1.0"],
+    "cardTags": ["MARKUP", "AI.MKLY", "V1.0"],
     "cardSecurityLevel": "NORMAL",
     "cardInitialX": 100,
     "cardInitialY": 150,
