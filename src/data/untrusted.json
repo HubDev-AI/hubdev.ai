@@ -1,7 +1,7 @@
 [
   {
     "id": "untrusted",
-    "visible": true,
+    "visible": false,
     "title": "untrusted",
     "seoDescription": "Untrusted<T> is a backend-focused security primitive enforcing security-by-construction through taint tracking, sec4Audit compiler, and policy-as-code.",
     "themeClass": "theme-untrusted",
