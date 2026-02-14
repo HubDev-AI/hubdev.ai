@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import React, { useState, useCallback } from 'react';
 import { Clipboard, Check } from 'lucide-react';
 
 /**
@@ -6,9 +7,9 @@ import { Clipboard, Check } from 'lucide-react';
  * Detects github.com URLs, npm @scope/packages, and https:// URLs.
  */
 const URL_PATTERNS = [
-  { regex: /(github\.com\/[\w\-\.]+\/[\w\-\.]+(?:\/[\w\-\.]*)*)/g, toHref: (m) => `https://${m}` },
+  { regex: /(github\.com\/[\w-.]+\/[\w-.]+(?:\/[\w-.]*)*)/g, toHref: (m) => `https://${m}` },
   { regex: /(https?:\/\/[^\s]+)/g, toHref: (m) => m },
-  { regex: /(@[\w\-]+\/[\w\-]+)/g, toHref: (m) => `https://www.npmjs.com/package/${m}` },
+  { regex: /(@[\w-]+\/[\w-]+)/g, toHref: (m) => `https://www.npmjs.com/package/${m}` },
 ];
 
 export function linkifyCode(text) {
@@ -50,9 +51,6 @@ export function linkifyCode(text) {
  */
 function CopyButton({ text }) {
   const [copied, setCopied] = useState(false);
-
-  // Reset when content changes (project switch)
-  useEffect(() => { setCopied(false); }, [text]);
 
   const handleCopy = useCallback(async () => {
     try {
@@ -145,7 +143,7 @@ export const markdownComponents = {
 
     return (
       <pre style={{ position: 'relative' }}>
-        {rawText && <CopyButton text={rawText} />}
+        {rawText && <CopyButton key={rawText} text={rawText} />}
         {children}
       </pre>
     );
