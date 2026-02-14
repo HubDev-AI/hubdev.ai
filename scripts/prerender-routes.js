@@ -52,8 +52,8 @@ const routes = [
         <li><strong>Semantic Output</strong>: Generates clean, accessible HTML5.</li>
       </ul>
       <h2>Quick Start</h2>
-      <pre><code>npm install @milkly/mkly</code></pre>
-      <p><a href="https://github.com/HubDev-AI/mkly">View on GitHub</a> | <a href="/">Back to HubDev AI</a></p>
+      <pre><code>npm install @mklyml/core</code></pre>
+      <p><a href="https://github.com/HubDev-AI/mklyml">View on GitHub</a> | <a href="/">Back to HubDev AI</a></p>
     `,
   },
   {

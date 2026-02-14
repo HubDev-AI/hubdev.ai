@@ -14,11 +14,11 @@
     "cardInitialY": 150,
     "navLabel": "mkly_Protocol",
     "dialogTitle": "MKLY_SUMMARY",
-    "summaryContent": "## mkly Markup Language\n\nA human-readable, AI-friendly markup language that compiles to HTML.\n\n### Features\n- **Zero-Config**: Works out of the box with standard tooling.\n- **Type-Safe**: Schema validation via Zod.\n- **Clean Output**: Generates semantic HTML5.\n\n### Quick Start\n```bash\nnpm install @milkly/mkly\n```\n",
+    "summaryContent": "## mkly Markup Language\n\nA human-readable, AI-friendly markup language that compiles to HTML.\n\n### Features\n- **Zero-Config**: Works out of the box with standard tooling.\n- **Type-Safe**: Schema validation via Zod.\n- **Clean Output**: Generates semantic HTML5.\n\n### Quick Start\n```bash\nnpm install @mklyml/core\n```\n",
     "themeColors": {
       "primary": "#00f3ff",
       "accent": "#0066ff"
     },
-    "streamContent": "\n## mkly Data Stream // v1.0.4\n\nINITIATING PROTOCOL...\nEstablishing connection to neural link...\nTarget: HUMAN-READABLE MARKUP LANGUAGE\n\n### > TRANSMISSION START\n\n**mkly** is a next-generation markup language designed for seamless AI-Human collaboration. It compiles directly to semantic HTML5, prioritizing readability and type safety.\n\n### > CORE CAPABILITIES\n\n*   **Zero-Configuration**: Deploys instantly with standard tooling chains.\n*   **Type-Safety Enforced**: Rigorous schema validation via Zod intercepts errors pre-compile.\n*   **Semantic Output**: Generates clean, accessible HTML5 structures.\n\n### > QUICK START SEQUENCE\n\n```bash\nnpm install @milkly/mkly\n# Repo: github.com/HubDev-AI/mkly\n```\n\n### > STATUS\nSYSTEM: OPTIMAL\nCOMPILER: ACTIVE\n  "
+    "streamContent": "\n## mkly Data Stream // v1.0.4\n\nINITIATING PROTOCOL...\nEstablishing connection to neural link...\nTarget: HUMAN-READABLE MARKUP LANGUAGE\n\n### > TRANSMISSION START\n\n**mkly** is a next-generation markup language designed for seamless AI-Human collaboration. It compiles directly to semantic HTML5, prioritizing readability and type safety.\n\n### > CORE CAPABILITIES\n\n*   **Zero-Configuration**: Deploys instantly with standard tooling chains.\n*   **Type-Safety Enforced**: Rigorous schema validation via Zod intercepts errors pre-compile.\n*   **Semantic Output**: Generates clean, accessible HTML5 structures.\n\n### > QUICK START SEQUENCE\n\n```bash\nnpm install @mklyml/core\n# Repo: github.com/HubDev-AI/mklyml\n```\n\n### > STATUS\nSYSTEM: OPTIMAL\nCOMPILER: ACTIVE\n  "
   }
 ]
