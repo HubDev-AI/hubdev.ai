@@ -11,9 +11,6 @@ import projects from './data'; // Import dynamic data
 // View Modes
 const VIEW_MODES = {
   OVERVIEW: 'OVERVIEW',
-  // Dynamic modes will match project IDs from data
-  MKLY: 'mkly',
-  UNTRUSTED: 'untrusted'
 };
 
 // Map URL path to viewMode

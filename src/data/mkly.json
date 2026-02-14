@@ -1,6 +1,7 @@
 [
   {
     "id": "mkly",
+    "visible": true,
     "title": "mkly",
     "seoDescription": "mkly is a zero-config, type-safe markup language with Zod schema validation that compiles to clean, semantic HTML5. Built for AI-human collaboration.",
     "themeClass": "theme-mkly",
