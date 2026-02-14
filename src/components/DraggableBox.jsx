@@ -1,14 +1,27 @@
-import { motion } from 'framer-motion';
+import * as FramerMotion from 'framer-motion';
 import React, { useRef } from 'react';
 
-const DraggableBox = ({ children, id, initialX = 0, initialY = 0, className = "", isCritical = false, onPositionChange }) => {
+const DraggableBox = ({
+  children,
+  id,
+  initialX = 0,
+  initialY = 0,
+  className = "",
+  isCritical = false,
+  onPositionChange,
+  draggable = true,
+  staticPosition = false
+}) => {
   const wasDragged = useRef(false);
 
   const handleDragStart = () => {
+    if (!draggable) return;
     wasDragged.current = true;
   };
 
   const handleDragEnd = (event, info) => {
+    if (!draggable) return;
+
     // Keep wasDragged true briefly so the click event is suppressed
     setTimeout(() => { wasDragged.current = false; }, 0);
 
@@ -28,16 +41,19 @@ const DraggableBox = ({ children, id, initialX = 0, initialY = 0, className = ""
   };
 
   return (
-    <motion.div
-      drag
+    <FramerMotion.motion.div
+      drag={draggable}
       dragMomentum={false}
-      initial={{ x: initialX, y: initialY }}
+      initial={staticPosition ? false : { x: initialX, y: initialY }}
       className={`cyber-box-container ${isCritical ? 'critical' : ''} ${className}`}
-      style={{ position: 'absolute' }}
+      style={{
+        position: staticPosition ? 'relative' : 'absolute',
+        width: staticPosition ? '100%' : undefined
+      }}
       whileHover={{ scale: 1.02, zIndex: 100 }}
       whileTap={{ scale: 0.98 }}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+      onDragStart={draggable ? handleDragStart : undefined}
+      onDragEnd={draggable ? handleDragEnd : undefined}
       onClickCapture={handleClick}
     >
       <div className="cyber-box-frame">
@@ -67,7 +83,7 @@ const DraggableBox = ({ children, id, initialX = 0, initialY = 0, className = ""
           borderRight: `2px solid ${isCritical ? 'var(--neon-red)' : 'var(--neon-cyan)'}` 
         }} />
       </div>
-    </motion.div>
+    </FramerMotion.motion.div>
   );
 };
 

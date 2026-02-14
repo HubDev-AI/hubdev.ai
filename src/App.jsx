@@ -11,10 +11,25 @@ import projects from './data'; // Import dynamic data
 // View Modes
 const VIEW_MODES = {
   OVERVIEW: 'OVERVIEW',
-  // Dynamic modes will match project IDs from data
-  MKLY: 'mkly',
-  UNTRUSTED: 'untrusted'
 };
+
+function clonePositions(positions) {
+  return Object.fromEntries(
+    Object.entries(positions).map(([key, value]) => [key, { ...value }])
+  );
+}
+
+function getInitialLoadedStreams() {
+  const set = new Set();
+  const params = new URLSearchParams(window.location.search);
+  if (!params.has('loaded')) return set;
+
+  const projectId = getViewModeFromPath(window.location.pathname);
+  if (projectId !== VIEW_MODES.OVERVIEW) {
+    set.add(projectId);
+  }
+  return set;
+}
 
 // Map URL path to viewMode
 function getViewModeFromPath(pathname) {
@@ -28,6 +43,9 @@ function App() {
   const [viewMode, setViewMode] = useState(() => getViewModeFromPath(window.location.pathname));
   const [activeDocDialog, setActiveDocDialog] = useState(null); // project.id
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isCompactLayout, setIsCompactLayout] = useState(() => window.innerWidth <= 980);
+  const [loadedStreams, setLoadedStreams] = useState(getInitialLoadedStreams);
+  const headerHeight = isCompactLayout ? 90 : 70;
 
   // --- Box Position Persistence ---
   // Parse initial box positions from URL query params (e.g. ?mkly=100,150&eco=100,600)
@@ -64,25 +82,50 @@ function App() {
     });
   }, []);
 
-  // Track which streams have completed their animation (per-project)
-  const loadedStreamsRef = useRef((() => {
-    const set = new Set();
-    // If initial URL has ?loaded, mark the current project as loaded
-    const params = new URLSearchParams(window.location.search);
-    if (params.has('loaded')) {
-      const projectId = getViewModeFromPath(window.location.pathname);
-      if (projectId !== VIEW_MODES.OVERVIEW) {
-        set.add(projectId);
-      }
+  const boxPositionsRef = useRef(boxPositions);
+  const isCompactLayoutRef = useRef(isCompactLayout);
+  const desktopPositionsRef = useRef(clonePositions(boxPositions));
+  const navRef = useRef(null);
+  useEffect(() => {
+    boxPositionsRef.current = boxPositions;
+    if (!isCompactLayoutRef.current) {
+      desktopPositionsRef.current = clonePositions(boxPositions);
     }
-    return set;
-  })());
-  // Force re-render trigger when loadedStreams changes
-  const [, forceUpdate] = useState(0);
-  const loadedStreams = loadedStreamsRef.current;
+  }, [boxPositions]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const nextIsCompact = window.innerWidth <= 980;
+      const wasCompact = isCompactLayoutRef.current;
+
+      if (nextIsCompact === wasCompact) return;
+
+      if (nextIsCompact) {
+        // Entering compact mode: remember desktop positions.
+        desktopPositionsRef.current = clonePositions(boxPositionsRef.current);
+      } else {
+        // Returning to desktop: restore the exact positions from before compact mode.
+        const restored = clonePositions(desktopPositionsRef.current);
+        setBoxPositions(restored);
+      }
+
+      isCompactLayoutRef.current = nextIsCompact;
+      setIsCompactLayout(nextIsCompact);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    isCompactLayoutRef.current = isCompactLayout;
+  }, [isCompactLayout]);
 
   // Handle Mouse Move for Parallax
   useEffect(() => {
+    if (isCompactLayout) {
+      return undefined;
+    }
+
     const handleMouseMove = (e) => {
       setMousePos({
         x: (e.clientX / window.innerWidth) * 2 - 1,
@@ -91,7 +134,7 @@ function App() {
     };
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  }, [isCompactLayout]);
 
   // Handle browser back/forward navigation
   useEffect(() => {
@@ -113,7 +156,7 @@ function App() {
     let targetPath;
     if (viewMode === VIEW_MODES.OVERVIEW) {
       const params = new URLSearchParams();
-      Object.entries(boxPositions).forEach(([k, v]) => {
+      Object.entries(boxPositionsRef.current).forEach(([k, v]) => {
         params.set(k, `${v.x},${v.y}`);
       });
       const qs = params.toString();
@@ -184,7 +227,7 @@ function App() {
     setMeta('property', 'twitter:title', title);
     setMeta('property', 'twitter:description', description);
     setMeta('property', 'twitter:url', url);
-  }, [viewMode]);
+  }, [loadedStreams, viewMode]);
 
   // Update Body Theme Class and Colors based on viewMode
   useEffect(() => {
@@ -225,17 +268,49 @@ function App() {
     setViewMode(VIEW_MODES.OVERVIEW);
   };
 
+  useEffect(() => {
+    if (!activeDocDialog) return undefined;
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        handleCloseDialog();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [activeDocDialog]);
+
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+
+    const activeTab = nav.querySelector('.nav-tab.active');
+    if (!activeTab) return;
+
+    activeTab.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+      inline: isCompactLayout ? 'center' : 'nearest'
+    });
+  }, [isCompactLayout, viewMode]);
+
   // Find active project data
   const activeDialogProject = activeDocDialog ? projects.find(p => p.id === activeDocDialog) : null;
   const activeStreamProject = viewMode !== VIEW_MODES.OVERVIEW ? projects.find(p => p.id === viewMode) : null;
+  const isCurrentStreamLoaded = loadedStreams.has(viewMode);
 
   // When stream finishes, mark it loaded and update URL
   const handleStreamComplete = React.useCallback((packetCount) => {
     const projectId = window.location.pathname.replace(/^\//, '');
-    loadedStreams.add(projectId);
+    setLoadedStreams(prev => {
+      if (prev.has(projectId)) return prev;
+      const next = new Set(prev);
+      next.add(projectId);
+      return next;
+    });
     const path = window.location.pathname;
     window.history.replaceState(null, '', `${path}?loaded=${packetCount}`);
-    forceUpdate(n => n + 1);
   }, []);
 
 
@@ -271,7 +346,12 @@ function App() {
       {/* 
         Main Content Layer 
       */}
-      <main className="ui-layer" role="main" aria-label="HubDev AI Dashboard">
+      <main
+        className="ui-layer"
+        role="main"
+        aria-label="HubDev AI Dashboard"
+        style={{ '--header-height': `${headerHeight}px` }}
+      >
         
         {/* Header - Always Visible */}
         <header style={{
@@ -279,7 +359,7 @@ function App() {
             top: 0,
             left: 0,
             width: '100%',
-            height: '70px',
+            height: `${headerHeight}px`,
             borderBottom: '2px solid var(--neon-primary)',
             background: 'linear-gradient(to bottom, #110000, rgba(17, 0, 0, 0.8))',
             backdropFilter: 'blur(5px)',
@@ -287,32 +367,45 @@ function App() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '0 40px',
+            flexDirection: isCompactLayout ? 'column' : 'row',
+            padding: isCompactLayout ? '10px 14px' : '0 40px',
             boxSizing: 'border-box',
             boxShadow: '0 5px 20px rgba(0,0,0, 0.5)',
             transition: 'border-color 0.5s ease'
         }}>
-            <div 
-                onClick={handleReturnToOverview} 
-                style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
+            <button
+                type="button"
+                onClick={handleReturnToOverview}
+                aria-label="Return to overview"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  cursor: 'pointer',
+                  width: '100%',
+                  background: 'transparent',
+                  border: 'none',
+                  padding: 0,
+                  textAlign: isCompactLayout ? 'center' : 'left',
+                  alignItems: isCompactLayout ? 'center' : 'flex-start'
+                }}
             >
                 <h1 className="glitch-text" data-text="HUBDEV_AI // SYSTEM_V2" style={{
                 margin: 0,
-                fontSize: '1.8rem',
+                fontSize: isCompactLayout ? '1rem' : '1.8rem',
                 fontWeight: 800,
                 color: 'var(--neon-primary)',
-                letterSpacing: '4px',
+                letterSpacing: isCompactLayout ? '2px' : '4px',
                 textTransform: 'uppercase',
                 transition: 'color 0.5s ease'
                 }}>
                 HUBDEV_AI // SYSTEM_V2
                 </h1>
-                <span style={{ fontSize: '0.7rem', color: '#666', letterSpacing: '2px', marginTop: '4px' }}>
+                <span style={{ fontSize: isCompactLayout ? '0.62rem' : '0.7rem', color: '#666', letterSpacing: isCompactLayout ? '1px' : '2px', marginTop: '4px' }}>
                     ACCESS_LEVEL: RESTRICTED
                 </span>
-            </div>
+            </button>
 
-            <div style={{ display: 'flex', gap: '30px', fontSize: '0.8rem', color: '#888', fontWeight: 'bold' }}>
+            <div style={{ display: 'flex', gap: isCompactLayout ? '12px' : '30px', fontSize: isCompactLayout ? '0.68rem' : '0.8rem', color: '#888', fontWeight: 'bold', width: isCompactLayout ? '100%' : 'auto', justifyContent: isCompactLayout ? 'center' : 'flex-start' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 MODE: <span style={{ color: '#fff', textShadow: '0 0 5px #fff' }}>{viewMode.toUpperCase()}</span>
             </span>
@@ -324,51 +417,63 @@ function App() {
         */}
         {viewMode === VIEW_MODES.OVERVIEW && (
           <>
-            {projects.map((project) => (
-               <DraggableBox 
-                 key={project.id}
-                 id={project.id}
-                 initialX={boxPositions[project.id]?.x ?? project.cardInitialX} 
-                 initialY={boxPositions[project.id]?.y ?? project.cardInitialY}
-                 isCritical={project.isCritical}
-                 onPositionChange={handleBoxPositionChange}
-               >
-                 <div onClick={() => handleOpenDialog(project.id)} style={{ cursor: 'pointer' }}>
-                   <ProjectCard 
-                     title={project.cardTitle} 
-                     description={project.cardDesc}
-                     links={[]}
-                     tags={project.cardTags}
-                     securityLevel={project.cardSecurityLevel}
-                   />
-                 </div>
-               </DraggableBox>
-            ))}
+            <section className={isCompactLayout ? 'overview-stack' : ''}>
+              {projects.map((project) => (
+                 <DraggableBox
+                   key={`${project.id}-${isCompactLayout ? 'compact' : 'desktop'}`}
+                   id={project.id}
+                   initialX={boxPositions[project.id]?.x ?? project.cardInitialX}
+                   initialY={boxPositions[project.id]?.y ?? project.cardInitialY}
+                   isCritical={project.isCritical}
+                   onPositionChange={handleBoxPositionChange}
+                   draggable={!isCompactLayout}
+                   staticPosition={isCompactLayout}
+                 >
+                   <button
+                     type="button"
+                     onClick={() => handleOpenDialog(project.id)}
+                     aria-label={`Open details for ${project.cardTitle}`}
+                     style={{ cursor: 'pointer', background: 'transparent', border: 'none', padding: 0, width: '100%', textAlign: 'left' }}
+                   >
+                     <ProjectCard
+                       title={project.cardTitle}
+                       description={project.cardDesc}
+                       links={[]}
+                       tags={project.cardTags}
+                       securityLevel={project.cardSecurityLevel}
+                     />
+                   </button>
+                 </DraggableBox>
+              ))}
 
-            {/* Ecosystem Data Box - STATIC (Not in JSON per request for project separation only) */}
-            <DraggableBox
-              id="eco"
-              initialX={boxPositions.eco?.x ?? 100}
-              initialY={boxPositions.eco?.y ?? 600}
-              onPositionChange={handleBoxPositionChange}
-            >
-                <div style={{ color: 'var(--text-color)', fontFamily: 'var(--font-tech)' }}>
-                <h4 style={{ 
-                    margin: '0 0 10px 0', 
-                    color: 'var(--neon-primary)', 
-                    borderBottom: '1px solid var(--neon-primary)',
-                    paddingBottom: '5px',
-                    textShadow: '0 0 5px var(--neon-primary)'
-                }}>
-                    ECOSYSTEM_MANIFEST
-                </h4>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.8rem', lineHeight: '1.8' }}>
-                    <li>SYSTEM: ONLINE</li>
-                    <li>THREAT: ELEVATED</li>
-                    <li>GRID: STABLE</li>
-                </ul>
-                </div>
-            </DraggableBox>
+              {/* Ecosystem Data Box - STATIC (Not in JSON per request for project separation only) */}
+              <DraggableBox
+                key={`eco-${isCompactLayout ? 'compact' : 'desktop'}`}
+                id="eco"
+                initialX={boxPositions.eco?.x ?? 100}
+                initialY={boxPositions.eco?.y ?? 600}
+                onPositionChange={handleBoxPositionChange}
+                draggable={!isCompactLayout}
+                staticPosition={isCompactLayout}
+              >
+                  <div style={{ color: 'var(--text-color)', fontFamily: 'var(--font-tech)' }}>
+                  <h4 style={{
+                      margin: '0 0 10px 0',
+                      color: 'var(--neon-primary)',
+                      borderBottom: '1px solid var(--neon-primary)',
+                      paddingBottom: '5px',
+                      textShadow: '0 0 5px var(--neon-primary)'
+                  }}>
+                      ECOSYSTEM_MANIFEST
+                  </h4>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.8rem', lineHeight: '1.8' }}>
+                      <li>SYSTEM: ONLINE</li>
+                      <li>THREAT: ELEVATED</li>
+                      <li>GRID: STABLE</li>
+                  </ul>
+                  </div>
+              </DraggableBox>
+            </section>
             
             {activeDialogProject && (
                 <>
@@ -391,12 +496,13 @@ function App() {
                         onLaunchStream={() => handleLaunchStream(activeDialogProject.id)}
                         isCritical={activeDialogProject.isCritical}
                         boxTheme={activeDialogProject.boxTheme}
+                        isCompactLayout={isCompactLayout}
                     />
                 </>
             )}
             
             {/* Animated Hologram - Overview Only */}
-            <Hologram />
+            {!isCompactLayout && <Hologram />}
           </>
         )}
 
@@ -405,9 +511,10 @@ function App() {
         */}
         {activeStreamProject && (
             <CinematicStream 
+                key={`${viewMode}-${isCurrentStreamLoaded ? 'loaded' : 'streaming'}`}
                 content={activeStreamProject.streamContent}
                 onComplete={handleStreamComplete}
-                skipAnimation={loadedStreams.has(viewMode)}
+                skipAnimation={isCurrentStreamLoaded}
             />
         )}
 
@@ -416,7 +523,7 @@ function App() {
            NAVIGATION BAR (Persistent)
            Allows switching between Overview and Stream(s)
         */}
-        <nav className="nav-bar" aria-label="Project Navigation">
+        <nav ref={navRef} className="nav-bar" aria-label="Project Navigation">
             <button 
                 className={`nav-tab ${viewMode === VIEW_MODES.OVERVIEW ? 'active' : ''}`}
                 onClick={handleReturnToOverview}

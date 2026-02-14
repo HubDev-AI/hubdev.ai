@@ -8,6 +8,8 @@ export default function CinematicStream({ content, onComplete, skipAnimation = f
   const [phase, setPhase] = useState(skipAnimation ? 'streaming' : 'revealing');
   const scrollRef = useRef(null);
   const indexRef = useRef(0);
+  const renderedContent = skipAnimation ? content : displayedContent;
+  const showTypingCursor = skipAnimation ? false : isTyping;
 
   // Lightsaber reveal phase — wait for animation to finish before streaming
   useEffect(() => {
@@ -20,18 +22,14 @@ export default function CinematicStream({ content, onComplete, skipAnimation = f
     // Don't start streaming until reveal is done
     if (phase !== 'streaming') return;
 
-    // If skipping animation, show everything immediately
+    // If skipping animation, complete immediately without state churn
     if (skipAnimation) {
-      setDisplayedContent(content);
-      setIsTyping(false);
       if (onComplete) onComplete(content.length);
       return;
     }
 
-    // Reset on content change
+    // Reset index for new stream run
     indexRef.current = 0;
-    setDisplayedContent('');
-    setIsTyping(true);
     let cancelled = false;
 
     const interval = setInterval(() => {
@@ -63,15 +61,15 @@ export default function CinematicStream({ content, onComplete, skipAnimation = f
   return (
     <div className={`cinematic-stream-container ${phase === 'revealing' ? 'revealing' : 'revealed'}`}>
       <div className="stream-content markdown-body" ref={scrollRef}>
-        <ReactMarkdown components={markdownComponents}>{displayedContent}</ReactMarkdown>
-        {isTyping && <span className="stream-cursor">▋</span>}
+        <ReactMarkdown components={markdownComponents}>{renderedContent}</ReactMarkdown>
+        {showTypingCursor && <span className="stream-cursor">▋</span>}
       </div>
       
       {/* HUD Decor */}
       <div className="stream-scanline"></div>
       <div className="stream-status">
-        <span>DATA_STREAM: {phase === 'revealing' ? 'INITIALIZING...' : isTyping ? 'RECEIVING...' : 'COMPLETE'}</span>
-        <span>PACKETS: {displayedContent.length} / {content.length}</span>
+        <span>DATA_STREAM: {phase === 'revealing' ? 'INITIALIZING...' : showTypingCursor ? 'RECEIVING...' : 'COMPLETE'}</span>
+        <span>PACKETS: {renderedContent.length} / {content.length}</span>
       </div>
     </div>
   );
