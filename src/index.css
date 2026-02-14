@@ -254,9 +254,6 @@ body {
 /* Stream Cursor */
 .stream-cursor {
   display: inline-block;
-  width: 10px;
-  height: 1.2rem;
-  background: var(--neon-primary);
   animation: blink 1s step-end infinite;
   vertical-align: middle;
   margin-left: 5px;
