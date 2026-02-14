@@ -18,7 +18,8 @@ The following naming conventions are locked for the project:
 *   **Package Namespace:** `ut/std`, `ut/http`, `ut/sec`
 
 ### mkly
-*   **Repo:** `https://github.com/HubDev-AI/mkly`
+*   **Repo:** `https://github.com/HubDev-AI/mklyml`
+*   **Package:** `@mklyml/core`
 *   **Local Path:** `/Users/vladimirtrifonov/src/ai/milkly/vibecodeapp/workspace/milkly-mklyml/mkly`
 
 ## Development
